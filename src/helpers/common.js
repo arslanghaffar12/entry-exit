@@ -1,7 +1,12 @@
 import { encryptStorage } from './encryptStorage'
 import _logo from '../assets/logo.png'
+import heatmap_ranges from "../assets/HeatmapRanges1.jpg"
+import heatmap_demo from "../assets/heatmap.png"
 
-export const logo = _logo
+
+export const logo = _logo;
+export const heatmapRange = heatmap_ranges;
+export const heatmapDemo = heatmap_demo
 
 export const storage = {
     set: (key, value) => {

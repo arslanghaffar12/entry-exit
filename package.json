@@ -10,6 +10,7 @@
     "bootstrap": "^5.3.2",
     "echarts-for-react": "^3.0.2",
     "encrypt-storage": "^2.12.22",
+    "heatmap.js": "^2.0.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.1.0",
