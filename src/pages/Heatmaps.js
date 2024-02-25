@@ -1,15 +1,35 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux';
 import { Col, Row, CardBody, Card } from 'reactstrap';
 import Heatmap from '../components/Heatmap';
 import { heatmapDemo, heatmapRange } from '../helpers/common';
+import { heatmapRequest } from '../helpers/request';
 
 export default function Heatmaps() {
 
   const [data, setData] = useState({ dye: '', map: '' })
   const [normalizeHeatmap, setNormalizeHeatmap] = useState([]);
+  const filter = {}
 
   const dispatch = useDispatch();
+
+
+  const fetchHeatmap = async () => {
+    let obj = {
+      data: {
+        start: "",
+        end: ""
+      }
+    }
+
+    const response = await heatmapRequest(obj);
+    console.log('response of heatmap', response);
+  }
+
+
+  useEffect(() => {
+    fetchHeatmap()
+  })
 
   return (
     <Fragment>
@@ -63,7 +83,7 @@ export default function Heatmaps() {
                 <Col md={9}>
                   <img src={heatmapDemo} className="rounded w-100" />
                 </Col>
-              
+
               </Row>
             </CardBody>
           </Card>

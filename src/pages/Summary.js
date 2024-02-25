@@ -4,17 +4,43 @@ import LineCore from '../charts/LineCore'
 import PieCore from '../charts/Pie-charts'
 import PieChart from '../charts/Pie-charts'
 import ColorDot from '../components/ColorDot'
+import MainFilter from '../components/MainFilter'
+import { footfallRequest } from '../helpers/request'
 import { colors, graphColorsTwo } from '../helpers/utils'
 
 export default function Summary() {
+
+  const updateFilter = () => {
+    
+  }
 
   const children = [
     { value: 45, label: "Entry" },
     { value: 87, label: "Exit" },
 
   ]
+
+  const fetchSummary = async () => {
+
+    let obj = {
+      data: {
+        start: "",
+        end: ""
+      }
+    };
+
+    const response = await footfallRequest(obj);
+    console.log("response of footfall", response);
+  }
+
+
   return (
     <Fragment>
+      <MainFilter
+        type="calendar"
+
+        updateFilter={updateFilter}
+      />
       <h4>Visitors</h4>
       <Row className='my-4 ' >
 
@@ -71,7 +97,7 @@ export default function Summary() {
 
         </Col>
 
-        <Col md={7} className='p-0' style={{marginLeft : "10px"}}>
+        <Col md={7} className='p-0' style={{ marginLeft: "10px" }}>
           <div className='feature'>
             <LineCore />
           </div>

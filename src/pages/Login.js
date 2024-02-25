@@ -1,6 +1,8 @@
 import React, { useState, Fragment } from 'react';
+import { useDispatch } from 'react-redux';
 import { logo } from '../helpers/common';
-
+import { loginRequest } from '../helpers/request';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 
@@ -8,6 +10,8 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const dispatch = useDispatch();
+  let navigate = useNavigate();
 
   const submit = async (event) => {
 
@@ -16,6 +20,21 @@ const Login = () => {
       setError('Please fill in all fields.');
       return;
     }
+
+    let obj = {
+      data: {
+        email,
+        password
+      },
+      dispatch
+    }
+
+    const response = await loginRequest(obj)
+    if (response.status) {
+      navigate("/");
+  }
+    console.log('response of login',response);
+
   }
 
 
@@ -35,7 +54,7 @@ const Login = () => {
             <label>Email address</label>
           </div>
           <div className="form-floating mb-3 input-group">
-            <input type={ "password"} className="form-control" id="floatingPassword" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+            <input type={"password"} className="form-control" id="floatingPassword" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
             <label >Password</label>
 
           </div>
@@ -45,7 +64,7 @@ const Login = () => {
             id='submitButton'
             onClick={() => submit()}
           >
-                        {"Signin"}
+            {"Signin"}
 
           </button>
           <p className="mt-5 mb-3 text-muted">&copy;  {new Date().getFullYear()}</p>
