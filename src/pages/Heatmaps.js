@@ -4,6 +4,7 @@ import { Col, Row, CardBody, Card } from 'reactstrap';
 import Heatmap from '../components/Heatmap';
 import { heatmapDemo, heatmapRange } from '../helpers/common';
 import { heatmapRequest } from '../helpers/request';
+import MainFilter from '../components/MainFilter';
 
 export default function Heatmaps() {
 
@@ -14,25 +15,32 @@ export default function Heatmaps() {
   const dispatch = useDispatch();
 
 
-  const fetchHeatmap = async () => {
+
+
+
+  const updateFilter = async (e) => {
+    console.log('date im recieving', e);
+
     let obj = {
       data: {
-        start: "",
-        end: ""
+        start: e.start,
+        end: e.end
       }
     }
 
     const response = await heatmapRequest(obj);
-    console.log('response of heatmap', response);
   }
 
 
-  useEffect(() => {
-    fetchHeatmap()
-  })
+
 
   return (
     <Fragment>
+      <MainFilter
+        type="calendar"
+        pageTitle="Heatmap"
+        updateFilter={updateFilter}
+      />
 
       {data.dye &&
         <Row className="mb-3">

@@ -1,16 +1,19 @@
 import { Filter } from 'react-feather';
-import {  getDifference, getEndDate, getStartDate } from '../helpers/filterCommon';
+import { getDifference, getEndDate, getStartDate } from '../helpers/filterCommon';
 import { Dropdown, DropdownMenu, DropdownToggle, Row, Col, ListGroup, ListGroupItem, Button, Input, InputGroup, Label, ButtonGroup, CardBody, CardHeader, Card } from 'reactstrap';
 import React, { Fragment, useEffect, useState, useRef } from 'react';
-import 'react-modern-calendar-datepicker/lib/DatePicker.css';
-import { Calendar } from 'react-modern-calendar-datepicker';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
+
+
 
 import './MainFilter.css'
 import { colors } from '../helpers/utils';
 import { useLocalStorage } from '../helpers/useLocalStorage';
 
+import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
+
+import { Calendar } from '@hassanmojab/react-modern-calendar-datepicker';
 
 const MainFilter = (props) => {
 
@@ -18,7 +21,7 @@ const MainFilter = (props) => {
 
 
     // useRef
- 
+
     const isFirstRender = useRef(true);
 
 
@@ -70,7 +73,7 @@ const MainFilter = (props) => {
             to: defaultDate
         }
     );
- 
+
 
 
 
@@ -82,7 +85,7 @@ const MainFilter = (props) => {
     }
 
 
-   
+
 
 
     const setSelectedDayRangeFromCalendar = (obj) => {
@@ -110,25 +113,12 @@ const MainFilter = (props) => {
 
     const updateFilterForOnlyCalendar = async () => {
 
-        let _endDate;
-        let _startDate;
-        let dateDifference = getDifference(selectedDayRange.from, selectedDayRange.to);
-        if (props.singleDate) {
-            if (dateDifference === 0) {
-                _endDate = await getEndDate(selectedDayRange?.to);
-                _startDate = await getStartDate(selectedDayRange?.from)
-            }
-            else {
-                _endDate = await getEndDate(defaultDate)
-                _startDate = await getStartDate(defaultDate)
-                setSelectedDayRange({ from: defaultDate, to: defaultDate })
-            }
 
-        }
-        else {
-            _endDate = await getEndDate(selectedDayRange?.to);
-            _startDate = await getStartDate(selectedDayRange?.from)
-        }
+
+
+        let _endDate = await getEndDate(selectedDayRange?.to);
+        let _startDate = await getStartDate(selectedDayRange?.from)
+
 
 
 
@@ -139,26 +129,6 @@ const MainFilter = (props) => {
 
     }
 
-
-   
-
-
-   
-
-  
-
-
-
-   
-
-
-
-  
-
-   
-
-
-   
 
     const createDateFilters = () => {
         var dateFilters = {};
@@ -197,22 +167,18 @@ const MainFilter = (props) => {
         setSelectedDayRange({ from: date.from, to: date.to });
     }
 
- 
 
 
+    useEffect(() => {
 
-    
-
-
-
-    useEffect( () => {
-       
         if (props.type === "calendar") {
             updateFilterForOnlyCalendar()
         }
-        
 
 
+        return () => {
+
+        }
 
     }, [])
 
@@ -220,7 +186,7 @@ const MainFilter = (props) => {
 
 
 
-  
+
     useEffect(() => {
         let _currentDate = new Date();
         if (dateSelection === 'today') {
@@ -231,15 +197,6 @@ const MainFilter = (props) => {
     }, [selectedDayRange])
 
 
-
-
-
-
-  
-
-
-
-  
 
 
     useEffect(() => {
@@ -253,9 +210,9 @@ const MainFilter = (props) => {
 
 
 
-   
 
-    
+
+
 
 
 
@@ -281,7 +238,7 @@ const MainFilter = (props) => {
     })
 
 
-   
+
 
 
     const singleRangeDateFilters = dateFilters.filter((val) => {
@@ -291,8 +248,8 @@ const MainFilter = (props) => {
 
 
     const datesMenuCustom = singleRangeDateFilters.map((val) => {
-        
-         {
+
+        {
             return (
                 <ListGroupItem key={'dates-' + val._id} className={dateSelection == val._id ? 'active' : ''} tag="a" href="#" onClick={() => selectByDateFilter(val)}>
                     {val.label}
@@ -305,22 +262,6 @@ const MainFilter = (props) => {
 
 
 
-    
-
-
-  
-   
-
-
-    
-
-
-
-
-
-
-
-
 
     return (
         <Row className='mb-4 mt-1'>
@@ -330,16 +271,25 @@ const MainFilter = (props) => {
             <Col className='text-end' md={10}>
                 <Row>
                     <Col className='p-2 mt-2 text-end' md={10} style={{ overflow: "hidden" }} >
-                        
+
                     </Col>
                     <Col md={2} className='p-2'>
                         <Dropdown id="filter" className='px-1 py-2' style={{ width: "fit-content", float: "right", whiteSpace: 'nowrap' }} isOpen={showFilters} toggle={toggle} direction='down'>
-                            <DropdownToggle nav className='text-dark'>
+                            <DropdownToggle nav
+                                className='text-dark'
+                                onClick={() => toggle()}
+                                style={{
+                                    border: "2px solid #0d6efd",
+                                    borderRadius: "12px"
+                                }}
+                            >
                                 <Filter size="16" /> Filters
                             </DropdownToggle>
-                            <DropdownMenu id="main"
-                                className='dropdown-mobile'
-                                style={{ width: props.width ? props.width : "1100px", marginTop: '10px', 'marginTop': '10px !important' }}
+
+                            <DropdownMenu
+                                id="main"
+                                style={{ width: "600px", marginTop: '10px', 'marginTop': '10px !important' }}
+
                             >
                                 <div style={{ paddingLeft: "0.75rem", paddingRight: "0.75rem", background: "#ffffff", paddingBottom: "30px" }}>
                                     {
@@ -364,16 +314,15 @@ const MainFilter = (props) => {
                                                         <Calendar
                                                             calendarClassName='pt-0 Calendar'
                                                             value={selectedDayRange}
-                                                            onChange={props.singleDate ? setDateForEmployeeActivity : setSelectedDayRangeFromCalendar}
-                                                            colorPrimary={colors.primary}
-                                                            colorPrimaryLight={colors.highlight}
-                                                            maximumDate={getDateObject(moment(new Date()))}
+                                                            onChange={setSelectedDayRangeFromCalendar}
+                                                            shouldHighlightWeekends
+
                                                         />
                                                     </Col>
                                                 </Fragment>
 
                                             </Row>
-                                            <div className='text-end p-3'>
+                                            <div className='text-end pt-3'>
 
                                                 {
                                                     props.type === "calendar" &&
@@ -384,7 +333,7 @@ const MainFilter = (props) => {
                                         </>
 
                                     }
-                              
+
                                 </div>
                             </DropdownMenu>
                         </Dropdown>
