@@ -2,7 +2,15 @@ import React, { Fragment, useEffect, useState } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { convertMinutesIntoHourInString, graphColorsTwo } from '../helpers/utils';
 
-const getOptions = (title = '', data, legends, time = false, percentage =false) => {
+const getOptions = (title = '', data, legends, time = false, percentage = false) => {
+
+    console.log('data are', data);
+    let _data = [
+        {name : "Entry", value : 10},
+        {name : "Exit", value : 10},
+
+        
+    ]
     return {
         tooltip: {
             trigger: 'item',
@@ -11,17 +19,17 @@ const getOptions = (title = '', data, legends, time = false, percentage =false) 
             formatter: function (params) {
 
                 console.log('paramsparams', params);
-                if(percentage){
+                if (percentage) {
                     return `<p><span style="color:${params.color}; margin-right:10px;">\u2B24</span> <span style="font-weight:">${params.data.name}</span>  : <span style="font-weight:bold">${params.percent}% </span>  </p>`
 
-                }else {
-                    return `<p><span style="color:${params.color}; margin-right:10px;">\u2B24</span> <span style="font-weight:">${params.data.name}</span>  : <span style="font-weight:bold">${ time ? convertMinutesIntoHourInString(params.data.value) : params.data.value} </span>  </p>`
+                } else {
+                    return `<p><span style="color:${params.color}; margin-right:10px;">\u2B24</span> <span style="font-weight:">${params.data.name}</span>  : <span style="font-weight:bold">${time ? convertMinutesIntoHourInString(params.data.value) : params.data.value} </span>  </p>`
 
                 }
 
 
             }
-          
+
         },
         legend: {
             show: legends,
@@ -37,33 +45,24 @@ const getOptions = (title = '', data, legends, time = false, percentage =false) 
         },
         series: [
             {
-                name: title,
+                name: 'Footfall',
                 type: 'pie',
-                radius: ['70%', '80%'],
-                avoidLabelOverlap: false,
-                itemStyle: {
-                    borderRadius: 0,
-                    borderColor: '#fff',
-                    borderWidth: 1
-                },
-                label: {
-                    show: false,
-                    position: 'center'
-                },
+                radius: '80%',
+                data: _data,
                 emphasis: {
-                    scale: false
-                },
-                labelLine: {
-                    show: false
-                },
-                data: data
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
 
             }
         ]
     };
 }
 
-const PieCore = ({ title = '', data, legends, time = false, percentage=false }) => {
+const PieCore = ({ title = '', data, legends, time = false, percentage = false }) => {
 
     const [option, setOption] = useState(null);
     useEffect(() => {

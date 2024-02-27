@@ -29,6 +29,28 @@ export default function Heatmaps() {
     }
 
     const response = await heatmapRequest(obj);
+
+
+    try {
+      if (response.status) {
+        setNormalizeHeatmap(response.data)
+
+
+      }
+      else {
+        setNormalizeHeatmap([])
+
+      }
+
+
+
+    }
+
+    catch (err) {
+      console.log('error while setting heatmap', err);
+    }
+
+    console.log('response of heatmap', response);
   }
 
 
@@ -42,7 +64,8 @@ export default function Heatmaps() {
         updateFilter={updateFilter}
       />
 
-      {data.dye &&
+      {
+        // data.dye &&
         <Row className="mb-3">
           <Col>
             <Card>
@@ -54,8 +77,8 @@ export default function Heatmaps() {
 
 
                     <Heatmap
-                      dye={data ? data.dye : ""}
-                      map={data ? data.map : ""}
+                      dye={"https://api.adlytic.ai/uploads/client/16837908720941665990135630Stile-Stargate-Floor-Dye.png"}
+                      map={"https://api.adlytic.ai/uploads/client/16837908637601665990006471Stile-Stargate-Floor.jpg"}
                       heatmapData={normalizeHeatmap ? normalizeHeatmap : []}
                       key={"my_map"}
                       sections={[]}
@@ -76,7 +99,7 @@ export default function Heatmaps() {
           </Col>
         </Row>}
 
-      {!data.dye && (
+      {/* {!data.dye && (
         <>
           <Card>
             <CardBody>
@@ -96,7 +119,7 @@ export default function Heatmaps() {
             </CardBody>
           </Card>
         </>
-      )}
+      )} */}
     </Fragment>
   )
 }

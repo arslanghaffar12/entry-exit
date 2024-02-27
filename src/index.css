@@ -97,3 +97,18 @@ code {
   border: 0px solid #e5e5e5 !important;
   width: 100% !important;
 }
+
+.section-tab {
+  color: var(--dark) !important;
+  border-color: var(--silver) !important;
+}
+
+.section-tab:hover {
+  background-color: var(--highlight) !important;
+  color: #0d6efd !important;
+}
+
+.section-tab.active {
+  background-color: #0d6efd !important;
+  color: var(--white) !important;
+}
