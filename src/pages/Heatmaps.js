@@ -77,8 +77,8 @@ export default function Heatmaps() {
 
 
                     <Heatmap
-                      dye={"https://api.adlytic.ai/uploads/client/16837908720941665990135630Stile-Stargate-Floor-Dye.png"}
-                      map={"https://api.adlytic.ai/uploads/client/16837908637601665990006471Stile-Stargate-Floor.jpg"}
+                      dye={'https://devapi.adlytic.ai/uploads/client/1709055405596WhatsApp Image 2024-02-27 at 6.40.39 PM (1).jpg'}
+                      map={'https://devapi.adlytic.ai/uploads/client/1709055405596WhatsApp Image 2024-02-27 at 6.40.39 PM (1).jpg'}
                       heatmapData={normalizeHeatmap ? normalizeHeatmap : []}
                       key={"my_map"}
                       sections={[]}
