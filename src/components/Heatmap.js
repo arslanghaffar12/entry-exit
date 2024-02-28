@@ -45,7 +45,7 @@ class Heatmap extends Component {
         console.log('heatmap data', data);
         console.log('heatmap dataScale', dataScale);
 
-        return { max: max, data: dataScale };
+        return { max: max, data: data };
     }
 
 
@@ -54,7 +54,7 @@ class Heatmap extends Component {
 
         this.imageElement = document.createElement("img");
         this.imageElement.src = this.props.map;
-        console.log('this.imageElement.src',this.imageElement.src);
+        console.log('this.imageElement.src', this.imageElement.src);
         this.imageElement.addEventListener('load', () => {
             console.log(this.imageElement.width, this.imageElement.height);
             this.setState({ isImageLoaded: true });
@@ -63,14 +63,16 @@ class Heatmap extends Component {
 
 
         this.imageElement.onload = () => {
-            console.log('this.imageElement.src inside',this.imageElement.src);
+            console.log('this.imageElement.src inside', this.imageElement.src);
 
-            if (this.myInput.current) {
-                var drawingWidth = this.myInput.current.offsetWidth;
-                let scale = drawingWidth / this.imageElement.width;
-                this.setState({ scale: scale, imageWidth: this.imageElement.width, imageHeight: this.imageElement.height, })
+            this.setState({ imageWidth: this.imageElement.width, imageHeight: this.imageElement.height })
 
-            }
+            // if (this.myInput.current) {
+            //     var drawingWidth = this.myInput.current.offsetWidth;
+            //     let scale = drawingWidth / this.imageElement.width;
+            //     this.setState({ scale: scale, imageWidth: this.imageElement.width, imageHeight: this.imageElement.height, })
+
+            // }
 
 
             setTimeout(() => {
@@ -194,61 +196,43 @@ class Heatmap extends Component {
 
         return (
             <Fragment>
+                {console.log('this.props.dye.width', this.props.dye.width, this.props.dye.height)}
 
 
 
                 {this.state.isImageLoaded &&
 
                     <div
-                        // style={{ width: this.imageElemement.width + "px", height: this.imageElement.height + "px" }}
-                        // style={{ width: (this.state.imageWidth * this.state.scale) + "px", height: (this.state.imageHeight * this.state.scale) + "px" }}
-                        // style={{ width: '100%' }}
-                        style={{width : this.props.dye.width,
-                        height : this.props.dye.height
+
+                        style={{
+                            width: this.state.imageWidth + "px",
+                            height: this.state.imageHeight + "px"
                         }}
-                         ref={this.myInput}
-                         className='p-0 m-0'
+                        className='p-0 m-0'
 
                     >
 
-                        {/* {this.props.dye != null && this.props.dye.length > 0 &&
-                            <>
-                                <img
-                                //  width={this.state.imageWidth * this.state.scale}
-                                //     height={this.state.imageHeight * this.state.scale}
-                                    width ={this.props.dye.width}
-                                    height ={this.props.dye.height}
 
-                                    src={this.props.dye}
-                                    style={{ position: "absolute", zIndex: 2 }} alt='' />
-
-                            </>
-                        } */}
 
                         <div
                             id="live-heatmap"
-                            // ref={this.reference}
-                            // id={this.props.key}
+
                             style={{
-                                //  width: this.state.imageWidth + "px", height: this.state.imageHeight + "px",
-                                overflow: "auto", margin: "0px", padding: "0px", width: '100%', height: '100%'
+
+                                margin: "0px", padding: "0px",
+                                width: this.state.imageWidth + "px",
+                                height: this.state.imageHeight + "px"
+
                             }}
                         >
-                            {/* <svg
-                                height={this.state.imageHeight * this.state.scale}
-                                width={this.state.imageWidth * this.state.scale}
-                                style={{ position: "absolute", zIndex: 10 }}
-                            >
-                                
-                            </svg> */}
 
-                            <img 
-                              width ={this.props.dye.width}
-                              height ={this.props.dye.height}
-                            
-                            // width={this.state.imageWidth * this.state.scale}
-                            //  height={this.state.imageHeight * this.state.scale}
-                              src={this.props.map} alt='' />
+
+                            <img
+                                width={this.state.imageWidth}
+                                height={this.state.imageHeight}
+
+
+                                src={this.props.map} alt='' />
 
                         </div>
 
