@@ -53,26 +53,34 @@ export default function Summary() {
 
     const response = await footfallRequest(obj);
 
+    console.log('response of footfall', response);
+
+    if (typeof response !== undefined && response) {
+
+      setTotal({ entry: response.current.reduce((acc, curr) => acc + curr.entry, 0), exit: response.current.reduce((acc, curr) => acc + curr.exit, 0) })
+      setFootfall(response);
+      setFilter(e)
 
 
-    setTotal({ entry: response.current.reduce((acc, curr) => acc + curr.entry, 0), exit: response.current.reduce((acc, curr) => acc + curr.exit, 0) })
-    setFootfall(response);
-    setFilter(e)
+      try {
 
+        const line = await compileGraph(response.current, e, "line")
+        setLabels(line.label)
+        setLineGraph(line.graph)
+        const bar = await compileGraph(response.current, e, "bar")
+        // setLabels(bar.xLabels)
+        setBarGraph(bar.graph)
 
-    try {
+      }
+      catch (err) {
+        console.log('got error while making graph');
+      }
 
-      const line = await compileGraph(response.current, e, "line")
-      setLabels(line.label)
-      setLineGraph(line.graph)
-      const bar = await compileGraph(response.current, e, "bar")
-      // setLabels(bar.xLabels)
-      setBarGraph(bar.graph)
 
     }
-    catch (err) {
-      console.log('got error while making graph');
-    }
+
+
+
 
 
 

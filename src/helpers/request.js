@@ -44,7 +44,7 @@ export const heatmapRequest = async (requestData) => {
             'Authorization': `Bearer ${user?.token}`, // Example using access token from localStorage
         };
         const response = await axios.post(baseUrl + "heatmap/getHeatmap", requestData.data, {
-            // Optional configuration options like headers, timeout, etc.
+            headers
         });
 
         // Dispatch successful login action
@@ -57,7 +57,7 @@ export const heatmapRequest = async (requestData) => {
         console.log('errorMessage ===', errorMessage);
         // Dispatch login error action
         //   dispatchLoginError(errorMessage); // Replace with your actual dispatch function
-
+        return
         throw error; // Re-throw the error for further handling
     }
 };
@@ -71,13 +71,13 @@ export const footfallRequest = async (requestData) => {
             'Authorization': `Bearer ${user?.token}`, // Example using access token from localStorage
         };
 
-        const response = await axios.post(baseUrl + "fcache/getSummary", requestData.data, {
+        const response = await axios.post(baseUrl + "fcache/getSummary", requestData.data, {headers
             // Optional configuration options like headers, timeout, etc.
         });
 
         // Dispatch successful login action
         // requestData.dispatch(setHeatmap(response.data)); // Replace with your actual dispatch function
-
+        console.log('response of data',response);
         return response.data; // Return the response data for potential further use
     } catch (error) {
         const errorMessage = error.response?.data?.message || error.message; // Extract error message
@@ -85,6 +85,8 @@ export const footfallRequest = async (requestData) => {
         console.log('errorMessage ===', errorMessage);
         // Dispatch login error action
         //   dispatchLoginError(errorMessage); // Replace with your actual dispatch function
+
+        return
 
         throw error; // Re-throw the error for further handling
     }

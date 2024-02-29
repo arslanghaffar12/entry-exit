@@ -30,27 +30,33 @@ export default function Heatmaps() {
 
     const response = await heatmapRequest(obj);
 
+    console.log('response', response);
 
-    try {
-      if (response.status) {
-        setNormalizeHeatmap(response.data)
+    if (typeof response && response) {
+      try {
+        if (response.status) {
+          setNormalizeHeatmap(response.data)
+
+
+        }
+        else {
+          setNormalizeHeatmap([])
+
+        }
+
 
 
       }
-      else {
-        setNormalizeHeatmap([])
 
+      catch (err) {
+        console.log('error while setting heatmap', err);
       }
-
-
+    }
+    else {
+      setNormalizeHeatmap([])
 
     }
 
-    catch (err) {
-      console.log('error while setting heatmap', err);
-    }
-
-    console.log('response of heatmap', response);
   }
 
 

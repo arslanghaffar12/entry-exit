@@ -30,10 +30,10 @@ const Login = () => {
     }
 
     const response = await loginRequest(obj)
-    if (response.status) {
+    if (typeof response !== undefined && response && response.status) {
       navigate("/");
-  }
-    console.log('response of login',response);
+    }
+    console.log('response of login', response);
 
   }
 
