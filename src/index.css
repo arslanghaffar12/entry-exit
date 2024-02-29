@@ -1,3 +1,21 @@
+:root {
+  --primary-dark: #e86531;
+  --primary: #E88131;
+  --primary-light: #e89f31;
+  --bs-primary: #E88131;
+  --secondary: #AAAAAA;
+  --bs-secondary-rgb: #AAAAAA;
+  --dark: #000000;
+  --light-black: #324054;
+  --light-dark: #484964;
+  --white: #FFFFFF;
+  --highlight: #F8F7FA;
+  --silver: #dfdfdf;
+  --success: #57E777;
+  --danger: red;
+  --light-bg: #f0f8ff;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -35,6 +53,7 @@ code {
   padding: 0 10px;
   padding-block-end: 10px;
   border: 1px solid #d2d2d2;
+  border-radius: 5px;
 }
 
 .feature .title {
@@ -48,4 +67,48 @@ code {
   text-align: center;
   font-weight: bold;
   font-size: 24px
+}
+
+.nav-link {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--secondary) !important;
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+.nav-link.active {
+  font-weight: 400;
+  color: var(--primary) !important;
+}
+
+#main.dropdown-menu {
+  box-shadow: 0px 30px 84px rgba(19, 10, 46, 0.08), 0px 8px 32px rgba(19, 10, 46, 0.07), 0px 3px 14px rgba(19, 10, 46, 0.03), 0px 1px 3px rgba(19, 10, 46, 0.13);
+  border-radius: 12px 0px 0px 12px;
+  border: 0px solid transparent !important;
+  margin-top: 5px !important;
+  /* inset: 7px auto auto 0px !important; */
+}
+
+.Calendar {
+  box-shadow: none !important;
+  border: 0px solid #e5e5e5 !important;
+  width: 100% !important;
+}
+
+.section-tab {
+  color: var(--dark) !important;
+  border-color: var(--silver) !important;
+}
+
+.section-tab:hover {
+  background-color: var(--highlight) !important;
+  color: #0d6efd !important;
+}
+
+.section-tab.active {
+  background-color: #0d6efd !important;
+  color: var(--white) !important;
 }
