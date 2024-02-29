@@ -3,7 +3,7 @@ import axios from 'axios'
 import { setLogin } from '../redux/actions/auth';
 import { enums, storage } from './common';
 
-const baseUrl = "http://13.39.60.248:3000/";
+const baseUrl = "http://13.39.60.248:8000/";
 
 const defaultUser = { login: false, token: "" };
 export var user = storage.getParsed(enums.USER, defaultUser);
