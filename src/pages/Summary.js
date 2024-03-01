@@ -5,7 +5,7 @@ import PieCore from '../charts/Pie-charts'
 import PieChart from '../charts/Pie-charts'
 import ColorDot from '../components/ColorDot'
 import MainFilter from '../components/MainFilter'
-import { footfallRequest } from '../helpers/request'
+// import { footfallRequest } from '../helpers/request'
 import { capitalizeFirstLetter, colors, graphColorsTwo } from '../helpers/utils'
 import moment from 'moment'
 import { BarChart2, TrendingUp } from "react-feather";
@@ -51,33 +51,33 @@ export default function Summary() {
       }
     };
 
-    const response = await footfallRequest(obj);
+    // const response = await footfallRequest(obj);
 
-    console.log('response of footfall', response);
+    // console.log('response of footfall', response);
 
-    if (typeof response !== undefined && response) {
+    // if (typeof response !== undefined && response) {
 
-      setTotal({ entry: response.current.reduce((acc, curr) => acc + curr.entry, 0), exit: response.current.reduce((acc, curr) => acc + curr.exit, 0) })
-      setFootfall(response);
-      setFilter(e)
-
-
-      try {
-
-        const line = await compileGraph(response.current, e, "line")
-        setLabels(line.label)
-        setLineGraph(line.graph)
-        const bar = await compileGraph(response.current, e, "bar")
-        // setLabels(bar.xLabels)
-        setBarGraph(bar.graph)
-
-      }
-      catch (err) {
-        console.log('got error while making graph');
-      }
+    //   setTotal({ entry: response.current.reduce((acc, curr) => acc + curr.entry, 0), exit: response.current.reduce((acc, curr) => acc + curr.exit, 0) })
+    //   setFootfall(response);
+    //   setFilter(e)
 
 
-    }
+    //   try {
+
+    //     const line = await compileGraph(response.current, e, "line")
+    //     setLabels(line.label)
+    //     setLineGraph(line.graph)
+    //     const bar = await compileGraph(response.current, e, "bar")
+    //     // setLabels(bar.xLabels)
+    //     setBarGraph(bar.graph)
+
+    //   }
+    //   catch (err) {
+    //     console.log('got error while making graph');
+    //   }
+
+
+    // }
 
 
 

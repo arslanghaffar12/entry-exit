@@ -1,7 +1,7 @@
 import React, { useState, Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { logo } from '../helpers/common';
-import { loginRequest } from '../helpers/request';
+// import { loginRequest } from '../helpers/request';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 
@@ -29,11 +29,11 @@ const Login = () => {
       dispatch
     }
 
-    const response = await loginRequest(obj)
-    if (typeof response !== undefined && response && response.status) {
-      navigate("/");
-    }
-    console.log('response of login', response);
+    // const response = await loginRequest(obj)
+    // if (response.status) {
+    //   navigate("/");
+    // }
+    // console.log('response of login', response);
 
   }
 

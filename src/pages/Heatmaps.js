@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { Col, Row, CardBody, Card } from 'reactstrap';
 import Heatmap from '../components/Heatmap';
 import { heatmapDemo, heatmapRange } from '../helpers/common';
-import { heatmapRequest } from '../helpers/request';
+// import { heatmapRequest } from '../helpers/request';
 import MainFilter from '../components/MainFilter';
 
 export default function Heatmaps() {
@@ -28,34 +28,34 @@ export default function Heatmaps() {
       }
     }
 
-    const response = await heatmapRequest(obj);
+    // const response = await heatmapRequest(obj);
 
-    console.log('response', response);
+    // console.log('response', response);
 
-    if (typeof response && response) {
-      try {
-        if (response.status) {
-          setNormalizeHeatmap(response.data)
-
-
-        }
-        else {
-          setNormalizeHeatmap([])
-
-        }
+    // if (typeof response && response) {
+    //   try {
+    //     if (response.status) {
+    //       setNormalizeHeatmap(response.data)
 
 
+    //     }
+    //     else {
+    //       setNormalizeHeatmap([])
 
-      }
+    //     }
 
-      catch (err) {
-        console.log('error while setting heatmap', err);
-      }
-    }
-    else {
-      setNormalizeHeatmap([])
 
-    }
+
+    //   }
+
+    //   catch (err) {
+    //     console.log('error while setting heatmap', err);
+    //   }
+    // }
+    // else {
+    //   setNormalizeHeatmap([])
+
+    // }
 
   }
 
