@@ -14,6 +14,8 @@ import { useLocalStorage } from '../helpers/useLocalStorage';
 import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
 
 import { Calendar } from '@hassanmojab/react-modern-calendar-datepicker';
+import { user } from '../helpers/request';
+import ColorDot from './ColorDot';
 
 const MainFilter = (props) => {
 
@@ -288,7 +290,7 @@ const MainFilter = (props) => {
 
                             <DropdownMenu
                                 id="main"
-                                style={{ width: "600px", marginTop: '10px', 'marginTop': '10px !important' }}
+                                style={{ width: "1100px", marginTop: '10px', 'marginTop': '10px !important' }}
 
                             >
                                 <div style={{ paddingLeft: "0.75rem", paddingRight: "0.75rem", background: "#ffffff", paddingBottom: "30px" }}>
@@ -297,8 +299,27 @@ const MainFilter = (props) => {
                                         <>
                                             <Row>
                                                 <Fragment>
+                                                    <Col md={6} className="  pt-3 border-start border-end border-bottom border-1 ">
 
-                                                    <Col md={4} className="  pt-3 border-start border-end border-bottom border-1 ">
+                                                        <h4 className='filter-heading'>Clients</h4>
+                                                        <div className='d-flex content-parent'>
+                                                            <div className='filter-options d-flex'>
+
+                                                                <ColorDot 
+                                                                //   color={}
+                                                                  display={'inline-block'}
+                                                                />
+
+                                                                <Label>
+                                                                    {user.userData.access[0].sid.label}
+
+                                                                </Label>
+
+                                                            </div>
+                                                        </div>
+                                                    </Col>
+
+                                                    <Col md={2} className="  pt-3 border-start border-end border-bottom border-1 ">
                                                         <div className="">
                                                             <h4 className='filter-heading'>Date Filters</h4>
                                                             <div className='scrollbar ' id="style-3" style={{ width: "100%" }}>
@@ -309,7 +330,7 @@ const MainFilter = (props) => {
                                                             </div>
                                                         </div>
                                                     </Col>
-                                                    <Col md={8} className='border-bottom border-1'>
+                                                    <Col md={4} className='border-bottom border-1'>
 
                                                         <Calendar
                                                             calendarClassName='pt-0 Calendar'

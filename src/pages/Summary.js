@@ -9,10 +9,13 @@ import MainFilter from '../components/MainFilter'
 import { capitalizeFirstLetter, colors, graphColorsTwo } from '../helpers/utils'
 import moment from 'moment'
 import { BarChart2, TrendingUp } from "react-feather";
+import { useSelector } from 'react-redux'
 
 export default function Summary() {
 
   const [filter, setFilter] = useState();
+  const user = useSelector((state) => state);
+  console.log('user in summary is',user);
 
   const gr = [
     {
