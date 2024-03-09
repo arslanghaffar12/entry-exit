@@ -48,7 +48,7 @@ const getOptions = (title = '', data, legends, time = false, percentage = false)
                 name: 'Footfall',
                 type: 'pie',
                 radius: '80%',
-                data: _data,
+                data: data,
                 emphasis: {
                     itemStyle: {
                         shadowBlur: 10,

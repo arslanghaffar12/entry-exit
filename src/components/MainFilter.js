@@ -1,5 +1,5 @@
 import { Filter } from 'react-feather';
-import { getDifference, getEndDate, getStartDate } from '../helpers/filterCommon';
+import { convertObjectIntoArray, getDifference, getEndDate, getStartDate } from '../helpers/filterCommon';
 import { Dropdown, DropdownMenu, DropdownToggle, Row, Col, ListGroup, ListGroupItem, Button, Input, InputGroup, Label, ButtonGroup, CardBody, CardHeader, Card } from 'reactstrap';
 import React, { Fragment, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -35,6 +35,9 @@ const MainFilter = (props) => {
     // useStates
     const [dateSelection, setDateSelection] = useState("yesterday");
     const [showFilters, setShowFilters] = useState(false);
+
+
+
 
 
 
@@ -75,6 +78,11 @@ const MainFilter = (props) => {
             to: defaultDate
         }
     );
+    const [sids, setSids] = useLocalStorage("sid", {});
+    const [fids, setFids] = useLocalStorage("fids", {});
+    const [cids, setCids] = useLocalStorage("cids", {});
+
+    console.log('sids',sids, cids, fids);
 
 
 
@@ -120,11 +128,15 @@ const MainFilter = (props) => {
 
         let _endDate = await getEndDate(selectedDayRange?.to);
         let _startDate = await getStartDate(selectedDayRange?.from)
+        let sid = await convertObjectIntoArray(sids);
+        let fid = await convertObjectIntoArray(fids);
+        let cid = await convertObjectIntoArray(cids);
 
 
 
 
-        var filter = { start: _startDate, end: _endDate, EMP: '0', }
+
+        var filter = { start: _startDate, end: _endDate, EMP: '0', sid, fid, cid}
         props.updateFilter(filter);
         setShowFilters(false)
 
@@ -263,6 +275,52 @@ const MainFilter = (props) => {
     })
 
 
+    const items = ["one", "first", "second"];
+
+
+    const handleSid = (e) => {
+        let _sids = { ...sids }
+
+
+        if (e in _sids) {
+            delete _sids[e]
+        }
+        else {
+            _sids[e] = e
+        }
+
+        setSids(_sids)
+    }
+
+    const handleFid = (e) => {
+        let _fids = { ...fids }
+
+        if (e in _fids) {
+            delete _fids[e]
+        }
+        else {
+            _fids[e] = e
+        }
+
+        setFids(_fids)
+    }
+
+    const handleCids = (e) => {
+        let _cids = { ...cids }
+
+        if (e in _cids) {
+            delete _cids[e]
+        }
+        else {
+            _cids[e] = e
+        }
+
+        setCids(_cids)
+    }
+
+
+
+
 
 
     return (
@@ -301,22 +359,98 @@ const MainFilter = (props) => {
                                                 <Fragment>
                                                     <Col md={6} className="  pt-3 border-start border-end border-bottom border-1 ">
 
-                                                        <h4 className='filter-heading'>Clients</h4>
-                                                        <div className='d-flex content-parent'>
-                                                            <div className='filter-options d-flex'>
+                                                        <h4 className='filter-heading'>Stores</h4>
+                                                        <div style={{ marginLeft: "15px" }}>
+                                                            <div style={{ borderBottom: "1px solid #dee2e6", width: "" }}></div>
 
-                                                                <ColorDot 
-                                                                //   color={}
-                                                                  display={'inline-block'}
+                                                        </div>
+
+                                                        <div className='d-flex mt-2 content-parent'>
+                                                            <div className='checkbox-container  d-flex'>
+                                                                <input
+                                                                    type="checkbox"
+                                                                    id={`item-${1}`}
+                                                                    className="checkbox"
+                                                                    checked={user.userData.access[0].sid._id in sids}
+                                                                    onChange={(e) => handleSid(user.userData.access[0].sid._id)}
+                                                                    style={{ cursor: "pointer" }}
+
+                                                                // onChange={(event) => onChange(event.target.checked, item)}
                                                                 />
 
-                                                                <Label>
-                                                                    {user.userData.access[0].sid.label}
+                                                                <label
+                                                                    style={{ cursor: "pointer" }}
 
-                                                                </Label>
+                                                                    htmlFor={`item-${1}`}>{user.userData.access[0].sid.label}</label>
 
                                                             </div>
                                                         </div>
+
+                                                        <h4 className='mt-4 filter-heading'>Floors</h4>
+                                                        <div style={{ marginLeft: "15px" }}>
+                                                            <div style={{ borderBottom: "1px solid #dee2e6", width: "" }}></div>
+
+                                                        </div>
+                                                        <div className='d-flex mt-2 content-parent'>
+                                                            {
+                                                                user.userData.access[0].fid.map((flr, ind) => {
+                                                                    return (
+                                                                        <div className='checkbox-container  d-flex'>
+                                                                            <input
+                                                                                type="checkbox"
+                                                                                id={`floor-${ind}`}
+                                                                                className="checkbox"
+                                                                                checked={flr._id in fids}
+                                                                                onChange={() => handleFid(flr._id)}
+                                                                                style={{ cursor: "pointer" }}
+
+                                                                            // onChange={(event) => onChange(event.target.checked, item)}
+                                                                            />
+
+                                                                            <label
+                                                                                style={{ cursor: "pointer" }}
+
+                                                                                htmlFor={`floor-${ind}`}>{flr.label}</label>
+
+                                                                        </div>
+                                                                    )
+                                                                })
+                                                            }
+
+                                                        </div>
+
+                                                        <h4 className='mt-4 filter-heading'>Cameras</h4>
+                                                        <div style={{ marginLeft: "15px" }}>
+                                                            <div style={{ borderBottom: "1px solid #dee2e6", width: "" }}></div>
+
+                                                        </div>
+                                                        <div className='mt-2 d-flex content-parent'>
+                                                            {
+                                                                user.userData.access[0].cid.map((cidItem, ind) => {
+                                                                    return (
+                                                                        <div className='checkbox-container  d-flex'>
+                                                                            <input
+                                                                                type="checkbox"
+                                                                                id={`cidItem-${ind}`}
+                                                                                className="checkbox"
+                                                                                checked={cidItem._id in cids}
+                                                                                onChange={() => handleCids(cidItem._id)}
+                                                                                style={{ cursor: "pointer" }}
+                                                                            // onChange={(event) => onChange(event.target.checked, item)}
+                                                                            />
+
+                                                                            <label
+                                                                                style={{ cursor: "pointer" }}
+
+                                                                                htmlFor={`cidItem-${ind}`}>{cidItem.label}</label>
+
+                                                                        </div>
+                                                                    )
+                                                                })
+                                                            }
+
+                                                        </div>
+
                                                     </Col>
 
                                                     <Col md={2} className="  pt-3 border-start border-end border-bottom border-1 ">

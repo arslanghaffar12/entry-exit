@@ -5,8 +5,8 @@ import PieCore from '../charts/Pie-charts'
 import PieChart from '../charts/Pie-charts'
 import ColorDot from '../components/ColorDot'
 import MainFilter from '../components/MainFilter'
-// import { footfallRequest } from '../helpers/request'
-import { capitalizeFirstLetter, colors, graphColorsTwo } from '../helpers/utils'
+import { footfallRequest } from '../helpers/request'
+import { capitalizeFirstLetter, colors, formatNumberTwoDigits, graphColorsTwo } from '../helpers/utils'
 import moment from 'moment'
 import { BarChart2, TrendingUp } from "react-feather";
 import { useSelector } from 'react-redux'
@@ -15,7 +15,7 @@ export default function Summary() {
 
   const [filter, setFilter] = useState();
   const user = useSelector((state) => state);
-  console.log('user in summary is',user);
+  console.log('user in summary is', user);
 
   const gr = [
     {
@@ -50,37 +50,43 @@ export default function Summary() {
       data: {
         start: e.start,
         end: e.end,
-        "key": "newStore"
+        "key": "newStore",
+        sid: e.sid,
+        fid: e.fid,
+        cid: e.cid
       }
     };
 
-    // const response = await footfallRequest(obj);
+    const response = await footfallRequest(obj);
 
-    // console.log('response of footfall', response);
+    console.log('response of footfall', response);
 
-    // if (typeof response !== undefined && response) {
+    if (typeof response !== undefined && response) {
 
-    //   setTotal({ entry: response.current.reduce((acc, curr) => acc + curr.entry, 0), exit: response.current.reduce((acc, curr) => acc + curr.exit, 0) })
-    //   setFootfall(response);
-    //   setFilter(e)
-
-
-    //   try {
-
-    //     const line = await compileGraph(response.current, e, "line")
-    //     setLabels(line.label)
-    //     setLineGraph(line.graph)
-    //     const bar = await compileGraph(response.current, e, "bar")
-    //     // setLabels(bar.xLabels)
-    //     setBarGraph(bar.graph)
-
-    //   }
-    //   catch (err) {
-    //     console.log('got error while making graph');
-    //   }
+      setTotal({ entry: response.current.reduce((acc, curr) => acc + curr.entry, 0), exit: response.current.reduce((acc, curr) => acc + curr.exit, 0) })
+      setFootfall(response);
+      setFilter(e)
 
 
-    // }
+      try {
+
+        const line = await compileGraph(response.current, e, "line")
+        console.log('line graph', line);
+        setLabels(line.label)
+        setLineGraph(line.graph)
+        const bar = await compileGraph(response.current, e, "bar")
+        console.log('bar graph', bar);
+
+        // setLabels(bar.xLabels)
+        setBarGraph(bar.graph)
+
+      }
+      catch (err) {
+        console.log('got error while making graph');
+      }
+
+
+    }
 
 
 
@@ -124,6 +130,57 @@ export default function Summary() {
       console.log('diff', diff);
 
       if (diff == 0) {
+
+        let objectOfDates = {};
+        data = data.sort((a, b) => {
+          return parseInt(a.h) - parseInt(b.h)
+        })
+        data.forEach((item) => {
+          objectOfDates[item.h] = item;
+        })
+
+        while (end.diff(start, "hour") >= 0) {
+          const startMoment = moment(start).format("hh:mm a");
+          const hour = formatNumberTwoDigits( moment(start).hour());
+          console.log('startMoment', startMoment, "hour is",hour);
+          if (hour in objectOfDates) {
+            entry.data.push(objectOfDates[hour]['entry']);
+            exit.data.push(objectOfDates[hour]['exit']);
+          } else {
+            exit.data.push(0)
+            entry.data.push(0)
+          }
+          xLabels.push(startMoment);
+          start = start.add(1, "hour");
+
+
+
+        }
+
+        // for (let i = 0; i < 24; i++) {
+
+        //   let num = formatNumberTwoDigits(i);
+        //   xLabels.push(num);
+
+
+
+        //   if (num in objectOfDates) {
+        //     entry.data.push(objectOfDates[num]['entry']);
+        //     exit.data.push(objectOfDates[num]['exit']);
+        //   } else {
+        //     exit.data.push(0)
+        //     entry.data.push(0)
+        //   }
+
+
+        // }
+
+
+
+
+
+
+
 
       }
       else {

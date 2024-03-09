@@ -143,7 +143,7 @@ p strong {
 .filter-heading {
   font-size: 0.875em !important;
   font-weight: 500;
-  padding: 0.5rem 1rem !important;
+  padding: 0.1rem 1rem !important;
 }
 
 .custom-date-toggle {
@@ -254,7 +254,7 @@ p strong {
   background-color: #ffffff !important;
   border: 1px #D9D9D9 !important;
   color: black !important;
-  width: 270px;
+  width: 270px  ;
   height: 36px;
 
 }
@@ -318,51 +318,45 @@ p strong {
   font-size: 12px;
   border: 1px solid #dee2e6;
   padding: 0 10px;
+  justify-content: center;
+  text-align: center;
+  align-self: center;
+
+
 }
 
-.round {
-  position: relative;
-}
-
-.round label {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 50%;
+.checkbox-container {
+  display: flex; /* Make container a flexbox */
+  align-items: center; /* Align content vertically */
+  justify-content: center; /* Align content horizontally */
+  border-radius: 14px;
+  border: 1px solid #dee2e6;
+  padding: 3px 10px;
+  font-size: 12px;
+  margin-right: 5px;
   cursor: pointer;
-  height: 15px;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 15px;
+  /* background-color: #f1f2f3; Optional background color */
 }
 
-.round label:after {
-  border: 2px solid #fff;
-  border-top: none;
-  border-right: none;
-  content: "";
-  height: 4px;
-  /* Adjust height to maintain aspect ratio */
-  left: 5px;
-  /* Adjust for smaller checkbox */
-  opacity: 0;
-  position: absolute;
-  top: 5px;
-  /* Adjust for smaller checkbox */
-  transform: rotate(-45deg);
-  width: 8px;
-  /* Adjust width to maintain aspect ratio */
+
+
+
+.checkbox {
+  appearance: none; /* Hide default checkbox styles */
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ccc;
+  cursor: pointer;
+  margin-right: 5px;
+
+  /* margin-top: 0.25rem; Add spacing between checkbox and label */
 }
 
-.round input[type="checkbox"] {
-  visibility: hidden;
+.checkbox:checked {
+  background-color: #0d6efd; /* Change color on check */
 }
 
-.round input[type="checkbox"]:checked+label {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-}
-
-.round input[type="checkbox"]:checked+label:after {
-  opacity: 1;
+.label {
+  font-size: 14px; /* Adjust label font size */
 }
