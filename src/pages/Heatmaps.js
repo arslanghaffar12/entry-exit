@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Col, Row, CardBody, Card } from 'reactstrap';
 import Heatmap from '../components/Heatmap';
 import { heatmapDemo, heatmapRange } from '../helpers/common';
@@ -10,6 +10,10 @@ export default function Heatmaps() {
 
   const [data, setData] = useState({ dye: '', map: '' })
   const [normalizeHeatmap, setNormalizeHeatmap] = useState([]);
+  const [image, setImage] = useState({ url: '' })
+  console.log('image of dye',image);
+  const user = useSelector((state) => state.auth.user);
+
   const filter = {}
 
   const dispatch = useDispatch();
@@ -25,11 +29,20 @@ export default function Heatmaps() {
       data: {
         start: e.start,
         end: e.end,
-        sid : e.sid.length > 0 ? e.sid[0] : "",
-        fid : e.fid.length > 0 ? e.fid[0] : '',
-        cid : e.cid.length > 0 ? e.cid[0] : ""
+        sid: e.sid.length > 0 ? e.sid[0] : "",
+        fid: e.fid.length > 0 ? e.fid[0] : '',
+        cid: e.cid.length > 0 ? e.cid[0] : ""
       }
     }
+
+    console.log('user is',user);
+
+    let img = user?.userData?.access[0]?.cid?.filter((item) => item?._id === e?.cid[0]);
+    console.log('img in function',img);
+    if (typeof img !== undefined && img && img.length > 0) {
+      setImage(img[0])
+    }
+
 
     const response = await heatmapRequest(obj);
 
@@ -86,8 +99,8 @@ export default function Heatmaps() {
 
 
                     <Heatmap
-                      dye={'https://devapi.adlytic.ai/uploads/client/1709055405596WhatsApp Image 2024-02-27 at 6.40.39 PM (1).jpg'}
-                      map={'https://devapi.adlytic.ai/uploads/client/1709055405596WhatsApp Image 2024-02-27 at 6.40.39 PM (1).jpg'}
+                      dye={image.url}
+                      map={image.url}
                       heatmapData={normalizeHeatmap ? normalizeHeatmap : []}
                       key={"my_map"}
                       sections={[]}

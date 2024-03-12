@@ -4,7 +4,8 @@ import { setLogin } from '../redux/actions/auth';
 import { enums, storage } from './common';
 import { jwtDecode } from 'jwt-decode'
 
-const baseUrl = "http://localhost:8000/"
+const baseUrl = "http://13.39.60.248:8000/"
+
 // http://localhost:4200/login
 
 const defaultUser = { login: false, token: "" };

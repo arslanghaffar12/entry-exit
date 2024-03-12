@@ -14,7 +14,7 @@ import { useSelector } from 'react-redux'
 export default function Summary() {
 
   const [filter, setFilter] = useState();
-  const user = useSelector((state) => state);
+  const user = useSelector((state) => state.auth);
   console.log('user in summary is', user);
 
   const gr = [

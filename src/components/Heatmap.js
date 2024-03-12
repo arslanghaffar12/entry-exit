@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import h337 from 'heatmap.js'
+import { Popover, PopoverBody, PopoverHeader } from "reactstrap";
 
 
 class Heatmap extends Component {
@@ -45,16 +46,20 @@ class Heatmap extends Component {
         console.log('heatmap data', data);
         console.log('heatmap dataScale', dataScale);
 
-        return { max: max, data: data };
+        return { max: max, data: dataScale };
     }
 
 
     componentDidMount() {
         console.log('this.props.heatmapData--', this.props.heatmapData);
 
+        if (this.props.sections) {
+            let array = new Array(this.props.sections.length).fill(false);
+            this.setState({ popoverOpen: array })
+
+        }
         this.imageElement = document.createElement("img");
         this.imageElement.src = this.props.map;
-        console.log('this.imageElement.src', this.imageElement.src);
         this.imageElement.addEventListener('load', () => {
             console.log(this.imageElement.width, this.imageElement.height);
             this.setState({ isImageLoaded: true });
@@ -63,24 +68,18 @@ class Heatmap extends Component {
 
 
         this.imageElement.onload = () => {
-            console.log('this.imageElement.src inside', this.imageElement.src);
 
-            this.setState({ imageWidth: this.imageElement.width, imageHeight: this.imageElement.height })
+            if (this.myInput.current) {
+                var drawingWidth = this.myInput.current.offsetWidth;
+                let scale = drawingWidth / this.imageElement.width;
+                this.setState({ scale: scale, imageWidth: this.imageElement.width, imageHeight: this.imageElement.height, })
 
-            // if (this.myInput.current) {
-            //     var drawingWidth = this.myInput.current.offsetWidth;
-            //     let scale = drawingWidth / this.imageElement.width;
-            //     this.setState({ scale: scale, imageWidth: this.imageElement.width, imageHeight: this.imageElement.height, })
-
-            // }
+            }
 
 
             setTimeout(() => {
-
                 this.heatmapInstance = h337.create({
                     container: document.querySelector('#live-heatmap'),
-
-
                     radius: 9.5,
                     opacity: 0.9,
                     visible: true,
@@ -157,37 +156,35 @@ class Heatmap extends Component {
     }
 
     clickArea = (section) => {
-        if (typeof section !== undefined && section) {
-            this.setState({ selectedArea: section._id })
-            this.props.setSection(section); // this handles onclick updated request
-            // this.props.selectedSection(section.label);
-        }
-
+        this.setState({ selectedArea: section._id })
+        this.props.setSection(section); // this handles onclick updated request
+        this.props.selectedSection(section.label);
 
     };
-
-
 
     toggle = (index, status = -1) => {
-        this.setState((prevState) => {
-            const _popoverOpen = [...prevState.popoverOpen];
+        var _popoverOpen = this.state.popoverOpen.slice();
+        console.log('_popoverOpen', _popoverOpen, index, status);
+        if (status == -1) {
+            console.log('_popoverOpen', _popoverOpen, index);
 
-            if (status === -1) {
-                _popoverOpen[index] = !_popoverOpen[index];
-            } else {
-                _popoverOpen.fill(false); // Set all to false
-                _popoverOpen[index] = status === 1;
-            }
+            this.setState({ popoverOpen: _popoverOpen })
+        } else {
 
-            return { popoverOpen: _popoverOpen };
-        });
-    };
+            let pop = _popoverOpen.map((item, ind) => {
+                if (ind === index) {
+                    if (status === 1) {
 
-
-    handleSectionForCamera = (section) => {
-        this.props.setSection(section);
-        this.props.setModal(true)
-
+                        return item = true
+                    }
+                    else return item = false
+                }
+                else {
+                    return item = false
+                }
+            })
+            this.setState({ popoverOpen: pop })
+        }
     }
 
 
@@ -196,43 +193,131 @@ class Heatmap extends Component {
 
         return (
             <Fragment>
-                {console.log('this.props.dye.width', this.props.dye.width, this.props.dye.height)}
 
 
 
                 {this.state.isImageLoaded &&
 
                     <div
-
-                        style={{
-                            width: this.state.imageWidth + "px",
-                            height: this.state.imageHeight + "px"
-                        }}
-                        className='p-0 m-0'
+                        // style={{ width: this.imageElemement.width + "px", height: this.imageElement.height + "px" }}
+                        // style={{ width: (this.state.imageWidth * this.state.scale) + "px", height: (this.state.imageHeight * this.state.scale) + "px" }}
+                        style={{ width: '100%' }} ref={this.myInput}
 
                     >
 
+                        {this.props.dye != null && this.props.dye.length > 0 &&
+                            <>
+                                <img width={this.state.imageWidth * this.state.scale}
+                                    height={this.state.imageHeight * this.state.scale}
+                                    src={this.props.dye}
+                                    style={{ position: "absolute", zIndex: 2 }} alt='' />
 
+                            </>
+                        }
 
-                        <div
-                            id="live-heatmap"
-
+                        <div id="live-heatmap"
                             style={{
-
-                                margin: "0px", padding: "0px",
-                                width: this.state.imageWidth + "px",
-                                height: this.state.imageHeight + "px"
-
+                                //  width: this.state.imageWidth + "px", height: this.state.imageHeight + "px",
+                                overflow: "auto", margin: "0px", padding: "0px", width: '100%', height: '100%'
                             }}
                         >
+                            <svg
+                                height={this.state.imageHeight * this.state.scale}
+                                width={this.state.imageWidth * this.state.scale}
+                                style={{ position: "absolute", zIndex: 10 }}
+                            >
+                                {this.props.sections.map((section, ind) => {
+                                    var points = "";
+                                    var xCords = [];
+                                    var yCords = [];
+                                    section.positions.forEach((point, index) => {
+                                        if (index > 0) {
+                                            points +=
+                                                " " +
+                                                // point.x * this.state.scale +
+                                                point.x * this.state.scale +
 
+                                                "," +
+                                                point.y * this.state.scale;
+                                        } else {
+                                            points +=
+                                                point.x * this.state.scale +
+                                                "," +
+                                                point.y * this.state.scale;
+                                        }
+                                        xCords.push(point.x);
+                                        yCords.push(point.y);
+                                    });
+                                    var axisRatio = {
+                                        x: Math.floor(
+                                            (Math.max(...xCords) + Math.min(...xCords)) / 2
+                                        ),
+                                        y: Math.floor(
+                                            (Math.max(...yCords) + Math.min(...yCords)) / 2
+                                        ),
+                                    };
 
-                            <img
-                                width={this.state.imageWidth}
-                                height={this.state.imageHeight}
+                                    return (
+                                        <Fragment key={"section_" + ind}>
+                                            <svg
+                                                width={this.state.sectionWIdth * this.state.scale}
+                                                height={this.state.sectionHeight * this.state.scale}
+                                                id={"Popover-" + section._id}
+                                                x={axisRatio.x * this.state.scale - 12}
+                                                y={axisRatio.y * this.state.scale - 12}
+                                                stroke="rgba(0,0,0,0.1)"
+                                                strokeWidth="1"
+                                                fill={
+                                                    this.state.selectedArea === section._id
+                                                        ? "rgba(232,129,49,1)"
+                                                        : ""
+                                                }
+                                                viewBox="0 0 368 368"
+                                                onMouseEnter={() => this.toggle(ind, 1)}
+                                                onMouseLeave={() => this.toggle(ind, 0)}
+                                                style={{ zIndex: 100, position: "absolute", cursor: 'pointer' }}
+                                            >
+                                                <g>
+                                                    <g>
+                                                        <g>
+                                                            <path
+                                                                d="M184.333,0C102.01,0,35.036,66.974,35.036,149.297c0,33.969,11.132,65.96,32.193,92.515
+                                                                        c27.27,34.383,106.572,116.021,109.934,119.479l7.169,7.375l7.17-7.374c3.364-3.46,82.69-85.116,109.964-119.51
+                                                                        c21.042-26.534,32.164-58.514,32.164-92.485C333.63,66.974,266.656,0,184.333,0z M285.795,229.355
+                                                                        c-21.956,27.687-80.92,89.278-101.462,110.581c-20.54-21.302-79.483-82.875-101.434-110.552
+                                                                        c-18.228-22.984-27.863-50.677-27.863-80.087C55.036,78.002,113.038,20,184.333,20c71.294,0,129.297,58.002,129.296,129.297
+                                                                        C313.629,178.709,304.004,206.393,285.795,229.355z"
+                                                            />
+                                                            <path
+                                                                d="M184.333,59.265c-48.73,0-88.374,39.644-88.374,88.374c0,48.73,39.645,88.374,88.374,88.374s88.374-39.645,88.374-88.374
+                                                                        S233.063,59.265,184.333,59.265z M184.333,216.013c-37.702,0-68.374-30.673-68.374-68.374c0-37.702,30.673-68.374,68.374-68.374
+                                                                        s68.373,30.673,68.374,68.374C252.707,185.341,222.035,216.013,184.333,216.013z"
+                                                            />
+                                                        </g>
+                                                    </g>
+                                                </g>
+                                            </svg>
+                                            <polygon
+                                                onClick={() => this.clickArea(section)}
+                                                style={{
+                                                    fill:
+                                                        this.state.selectedArea === section._id ?
+                                                            "rgba(0,0,0,0.3)"
+                                                            : "rgba(0,0,0,0)",
+                                                }}
+                                                className={"itHeatmap"}
+                                                points={points}
+                                                onMouseEnter={() => this.toggle(ind, 1)}
+                                                onMouseLeave={() => this.toggle(ind, 0)}
+                                                id={"Popover-" + section._id}
+                                            />
+                                          
+                                        </Fragment>
+                                    );
+                                })}
+                            </svg>
 
-
-                                src={this.props.map} alt='' />
+                            <img width={this.state.imageWidth * this.state.scale} height={this.state.imageHeight * this.state.scale} src={this.props.map} alt='' />
 
                         </div>
 
@@ -240,9 +325,6 @@ class Heatmap extends Component {
 
                     </div>
                 }
-
-
-
             </Fragment>
         );
     }
