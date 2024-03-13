@@ -2,13 +2,14 @@ import React, { Fragment } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Col, Container, Row, Spinner, Toast, ToastBody, ToastHeader } from 'reactstrap';
 import TopHeaders from './TopHeaders';
+import Loaders from '../components/Loader';
 
 const Layout = () => {
     const tag = "LAYOUT";
     return (
         <Fragment>
-            <TopHeaders/>
-        
+            <TopHeaders />
+            <Loaders />
             <Container>
                 <Row>
                     <Col className='py-3'>

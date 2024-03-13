@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import h337 from 'heatmap.js'
-import { Popover, PopoverBody, PopoverHeader } from "reactstrap";
 
 
 class Heatmap extends Component {
@@ -15,7 +14,7 @@ class Heatmap extends Component {
             points: [],
             sectionWIdth: 25,
             sectionHeight: 25,
-            popoverOpen: new Array(this.props.sections.length).fill(false),
+            popoverOpen: [],
             selectedArea: '',
             hmInstance: null
         }
@@ -52,12 +51,12 @@ class Heatmap extends Component {
 
     componentDidMount() {
         console.log('this.props.heatmapData--', this.props.heatmapData);
-
         if (this.props.sections) {
             let array = new Array(this.props.sections.length).fill(false);
-            this.setState({ popoverOpen: array })
-
+            console.log('sections length is', array, this.props.sections);
+            this.setState({ popoverOpen: array });
         }
+
         this.imageElement = document.createElement("img");
         this.imageElement.src = this.props.map;
         this.imageElement.addEventListener('load', () => {
@@ -69,17 +68,25 @@ class Heatmap extends Component {
 
         this.imageElement.onload = () => {
 
+
+
             if (this.myInput.current) {
                 var drawingWidth = this.myInput.current.offsetWidth;
                 let scale = drawingWidth / this.imageElement.width;
                 this.setState({ scale: scale, imageWidth: this.imageElement.width, imageHeight: this.imageElement.height, })
+                console.log('drawingWidth is', drawingWidth, "this.imageElement.width", this.imageElement.width);
 
             }
 
 
             setTimeout(() => {
+                // console.log('this.props.key',this.props.key);
+                // console.log("document.querySelector('#live-heatmap')",this.props.key,document.querySelector(`#${this.props.key}`))
                 this.heatmapInstance = h337.create({
                     container: document.querySelector('#live-heatmap'),
+                    // container: document.querySelector(`#${this.props.key}`),
+
+
                     radius: 9.5,
                     opacity: 0.9,
                     visible: true,
@@ -116,12 +123,31 @@ class Heatmap extends Component {
             // this.props.dispatch(setLoading(false));
 
         };
+
+
+    }
+
+
+    componentDidCatch(error, errorInfo) {
+        console.log('Component Error:', error, errorInfo);
     }
 
 
 
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps, prevState) {
+
+        console.log('prevState', prevState, this.state.popoverOpen);
+        // if(prevState.popoverOpen !== this.state.popoverOpen)
+
+        if (this.props.sections !== prevProps.sections) {
+            if (this.props.sections) {
+                let array = new Array(this.props.sections.length).fill(false);
+                console.log('sections length is', array, this.props.sections);
+                this.setState({ popoverOpen: array });
+            }
+
+        }
 
 
 
@@ -131,11 +157,24 @@ class Heatmap extends Component {
             this.setState({ imageHeight: this.imageElement.height, imageWidth: this.imageElement.width });
             this.setState({ isImageLoaded: false })
 
+            console.log('yes map is changed');
+
+
+
+
+
+
         }
 
 
 
+
+
+
+
+
         try {
+
             if (this.state.isImageLoaded && this.heatmapInstance) {
                 if (this.props.heatmapData !== prevProps.heatmapData) {
                     let data = this.processHeatmapData(this.props.heatmapData);
@@ -156,35 +195,41 @@ class Heatmap extends Component {
     }
 
     clickArea = (section) => {
-        this.setState({ selectedArea: section._id })
-        this.props.setSection(section); // this handles onclick updated request
-        this.props.selectedSection(section.label);
+        if (typeof section !== undefined && section) {
+            this.setState({ selectedArea: section._id })
+            this.props.setSection(section); // this handles onclick updated request
+
+        }
+
 
     };
 
+
+
     toggle = (index, status = -1) => {
-        var _popoverOpen = this.state.popoverOpen.slice();
-        console.log('_popoverOpen', _popoverOpen, index, status);
-        if (status == -1) {
-            console.log('_popoverOpen', _popoverOpen, index);
+        console.log('index ==', index, "status is", status, this.state.popoverOpen);
 
-            this.setState({ popoverOpen: _popoverOpen })
-        } else {
-
-            let pop = _popoverOpen.map((item, ind) => {
-                if (ind === index) {
-                    if (status === 1) {
-
-                        return item = true
+        // if (this.props.sections.length === this.state.popoverOpen.length) {
+        this.setState(prevState => {
+            return {
+                popoverOpen: prevState.popoverOpen.map((item, ind) => {
+                    if (ind === index) {
+                        return status === -1 ? !item : status === 1;
+                    } else {
+                        return false;
                     }
-                    else return item = false
-                }
-                else {
-                    return item = false
-                }
-            })
-            this.setState({ popoverOpen: pop })
-        }
+                }),
+            };
+        });
+        // }
+
+    };
+
+
+    handleSectionForCamera = (section) => {
+        this.props.setSection(section);
+        this.props.setModal(true)
+
     }
 
 
@@ -193,21 +238,23 @@ class Heatmap extends Component {
 
         return (
             <Fragment>
+                {console.log('this.state.popoverOpen', this.state.popoverOpen, "scale is", this.state.scale, "imgwidthis ", this.state.imageWidth)}
 
 
 
-                {this.state.isImageLoaded &&
+                {
 
                     <div
                         // style={{ width: this.imageElemement.width + "px", height: this.imageElement.height + "px" }}
                         // style={{ width: (this.state.imageWidth * this.state.scale) + "px", height: (this.state.imageHeight * this.state.scale) + "px" }}
-                        style={{ width: '100%' }} ref={this.myInput}
+                        style={{ width: '100%', height: "100%" }} ref={this.myInput}
 
                     >
 
-                        {this.props.dye != null && this.props.dye.length > 0 &&
+                        {this.props.dye != null && this.props.dye.length > 0 && this.state.isImageLoaded &&
                             <>
-                                <img width={this.state.imageWidth * this.state.scale}
+                                <img
+                                    width={this.state.imageWidth * this.state.scale}
                                     height={this.state.imageHeight * this.state.scale}
                                     src={this.props.dye}
                                     style={{ position: "absolute", zIndex: 2 }} alt='' />
@@ -215,10 +262,14 @@ class Heatmap extends Component {
                             </>
                         }
 
-                        <div id="live-heatmap"
+                        <div
+                            id="live-heatmap"
+                            // ref={this.reference}
+                            // id={this.props.key}
                             style={{
                                 //  width: this.state.imageWidth + "px", height: this.state.imageHeight + "px",
-                                overflow: "auto", margin: "0px", padding: "0px", width: '100%', height: '100%'
+                                overflow: "auto", margin: "0px", padding: "0px", width: '100%', height: '100%',
+                                zIndex : "9999999999"
                             }}
                         >
                             <svg
@@ -259,6 +310,7 @@ class Heatmap extends Component {
 
                                     return (
                                         <Fragment key={"section_" + ind}>
+                                            {console.log('"Popover-" + section?._id', "Popover-" + section?._id)}
                                             <svg
                                                 width={this.state.sectionWIdth * this.state.scale}
                                                 height={this.state.sectionHeight * this.state.scale}
@@ -273,8 +325,8 @@ class Heatmap extends Component {
                                                         : ""
                                                 }
                                                 viewBox="0 0 368 368"
-                                                onMouseEnter={() => this.toggle(ind, 1)}
-                                                onMouseLeave={() => this.toggle(ind, 0)}
+                                                // onMouseEnter={() => this.toggle(ind, 1)}
+                                                // onMouseLeave={() => this.toggle(ind, 0)}
                                                 style={{ zIndex: 100, position: "absolute", cursor: 'pointer' }}
                                             >
                                                 <g>
@@ -308,10 +360,9 @@ class Heatmap extends Component {
                                                 className={"itHeatmap"}
                                                 points={points}
                                                 onMouseEnter={() => this.toggle(ind, 1)}
-                                                onMouseLeave={() => this.toggle(ind, 0)}
-                                                id={"Popover-" + section._id}
+                                                id={"Popover-" + section?._id}
                                             />
-                                          
+
                                         </Fragment>
                                     );
                                 })}
@@ -325,6 +376,9 @@ class Heatmap extends Component {
 
                     </div>
                 }
+
+
+
             </Fragment>
         );
     }

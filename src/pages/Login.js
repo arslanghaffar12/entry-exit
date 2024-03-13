@@ -1,5 +1,5 @@
 import React, { useState, Fragment } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logo } from '../helpers/common';
 import { loginRequest } from '../helpers/request';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const dispatch = useDispatch();
   let navigate = useNavigate();
+  const highlights = useSelector((state) => state.highlights);
 
   const submit = async (event) => {
 
@@ -34,7 +35,7 @@ const Login = () => {
     console.log('response of login', response);
 
     if (response.status) {
-  
+
 
       navigate("/");
     }
@@ -68,7 +69,7 @@ const Login = () => {
             id='submitButton'
             onClick={() => submit()}
           >
-            {"Signin"}
+            {highlights.loading ? "Wait..." : "Signin"}
 
           </button>
           <p className="mt-5 mb-3 text-muted">&copy;  {new Date().getFullYear()}</p>

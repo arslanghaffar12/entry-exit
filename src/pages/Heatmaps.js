@@ -11,7 +11,7 @@ export default function Heatmaps() {
   const [data, setData] = useState({ dye: '', map: '' })
   const [normalizeHeatmap, setNormalizeHeatmap] = useState([]);
   const [image, setImage] = useState({ url: '' })
-  console.log('image of dye',image);
+  console.log('image of dye', image);
   const user = useSelector((state) => state.auth.user);
 
   const filter = {}
@@ -32,13 +32,14 @@ export default function Heatmaps() {
         sid: e.sid.length > 0 ? e.sid[0] : "",
         fid: e.fid.length > 0 ? e.fid[0] : '',
         cid: e.cid.length > 0 ? e.cid[0] : ""
-      }
+      },
+      dispatch
     }
 
-    console.log('user is',user);
+    console.log('user is', user);
 
     let img = user?.userData?.access[0]?.cid?.filter((item) => item?._id === e?.cid[0]);
-    console.log('img in function',img);
+    console.log('img in function', img);
     if (typeof img !== undefined && img && img.length > 0) {
       setImage(img[0])
     }
@@ -94,9 +95,6 @@ export default function Heatmaps() {
               <CardBody>
                 <Row className="align-items-center justify-content-evenly">
                   <Col className="col-8 col-md-8">
-
-
-
 
                     <Heatmap
                       dye={image.url}

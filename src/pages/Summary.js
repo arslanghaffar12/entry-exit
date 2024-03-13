@@ -8,9 +8,10 @@ import MainFilter from '../components/MainFilter'
 import { footfallRequest } from '../helpers/request'
 import { capitalizeFirstLetter, colors, formatNumberTwoDigits, graphColorsTwo } from '../helpers/utils'
 import moment from 'moment'
-import { BarChart2, TrendingUp } from "react-feather";
-import { useSelector } from 'react-redux'
-
+import { BarChart2, Download, TrendingUp } from "react-feather";
+import { useDispatch, useSelector } from 'react-redux'
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 export default function Summary() {
 
   const [filter, setFilter] = useState();
@@ -34,10 +35,18 @@ export default function Summary() {
   const [graph, setGraph] = useState([]);
   const [footfall, setFootfall] = useState()
   const [labels, setLabels] = useState([]);
-  const [total, setTotal] = useState({ entry: 0, exit: 0 })
+  const [total, setTotal] = useState({ entry: 0, exit: 0, male: 0, female: 0 })
   const [type, setType] = useState("line")
+  const [genderType, setGenderType] = useState("line")
+
+
   const [barGraph, setBarGraph] = useState([]);
   const [lineGraph, setLineGraph] = useState([]);
+  const [chartType, setChartTpe] = useState('count')
+  const [countGraph, setCountGraph] = useState({ line: [], bar: [], legends: ['Entry', 'Exit'] })
+  const [genderGraph, setGenderGraph] = useState({ line: [], bar: [], legends: ['Male', 'Female'] })
+
+  const dispatch = useDispatch();
 
 
   console.log('graph is', graph);
@@ -54,7 +63,8 @@ export default function Summary() {
         sid: e.sid,
         fid: e.fid,
         cid: e.cid
-      }
+      },
+      dispatch
     };
 
     const response = await footfallRequest(obj);
@@ -62,19 +72,41 @@ export default function Summary() {
     console.log('response of footfall', response);
 
     if (typeof response !== undefined && response) {
+      let obj = {
+        entry: 0,
+        exit: 0,
+        male: 0,
+        female: 0
+      }
 
-      setTotal({ entry: response.current.reduce((acc, curr) => acc + curr.entry, 0), exit: response.current.reduce((acc, curr) => acc + curr.exit, 0) })
+      response.current.forEach((item) => {
+        obj['entry'] = obj['entry'] + item.entry;
+        obj['exit'] = obj['exit'] + item.exit;
+        obj['male'] = obj['male'] + item.male;
+        obj['female'] = obj['female'] + item.female;
+
+      })
+
+      setTotal(obj)
+
+      // setTotal({ entry: response.current.reduce((acc, curr) => acc + curr.entry, 0), exit: response.current.reduce((acc, curr) => acc + curr.exit, 0) })
       setFootfall(response);
       setFilter(e)
 
 
       try {
 
-        const line = await compileGraph(response.current, e, "line")
+        const line = await compileGraph(response.current, e, "line", 'entry', "exit")
+        const bar = await compileGraph(response.current, e, "bar", 'entry', 'exit')
+
+        const genderLine = await compileGraph(response.current, e, "line", 'male', "female")
+        const genderBar = await compileGraph(response.current, e, "bar", 'male', 'female')
+        setCountGraph({ line: line.graph, bar: bar.graph, legends: line.legends })
+        setGenderGraph({ line: genderLine.graph, bar: genderBar.graph, legends: genderLine.legends })
+
         console.log('line graph', line);
         setLabels(line.label)
         setLineGraph(line.graph)
-        const bar = await compileGraph(response.current, e, "bar")
         console.log('bar graph', bar);
 
         // setLabels(bar.xLabels)
@@ -101,7 +133,7 @@ export default function Summary() {
 
   ]
 
-  const compileGraph = (data, payload, type) => {
+  const compileGraph = (data, payload, type, key1, key2) => {
 
 
     try {
@@ -114,13 +146,13 @@ export default function Summary() {
       let entry = {
         data: [],
         type: type,
-        name: 'Entry'
+        name: key1
       }
 
       let exit = {
         data: [],
         type: type,
-        name: 'Exit'
+        name: key2
       }
 
 
@@ -141,11 +173,11 @@ export default function Summary() {
 
         while (end.diff(start, "hour") >= 0) {
           const startMoment = moment(start).format("hh:mm a");
-          const hour = formatNumberTwoDigits( moment(start).hour());
-          console.log('startMoment', startMoment, "hour is",hour);
+          const hour = formatNumberTwoDigits(moment(start).hour());
+          console.log('startMoment', startMoment, "hour is", hour);
           if (hour in objectOfDates) {
-            entry.data.push(objectOfDates[hour]['entry']);
-            exit.data.push(objectOfDates[hour]['exit']);
+            entry.data.push(objectOfDates[hour][key1]);
+            exit.data.push(objectOfDates[hour][key2]);
           } else {
             exit.data.push(0)
             entry.data.push(0)
@@ -156,31 +188,6 @@ export default function Summary() {
 
 
         }
-
-        // for (let i = 0; i < 24; i++) {
-
-        //   let num = formatNumberTwoDigits(i);
-        //   xLabels.push(num);
-
-
-
-        //   if (num in objectOfDates) {
-        //     entry.data.push(objectOfDates[num]['entry']);
-        //     exit.data.push(objectOfDates[num]['exit']);
-        //   } else {
-        //     exit.data.push(0)
-        //     entry.data.push(0)
-        //   }
-
-
-        // }
-
-
-
-
-
-
-
 
       }
       else {
@@ -204,8 +211,8 @@ export default function Summary() {
           xLabels.push(_start);
 
           if (_start in objectOfDates) {
-            entry.data.push(objectOfDates[_start]['entry']);
-            exit.data.push(objectOfDates[_start]['exit']);
+            entry.data.push(objectOfDates[_start][key1]);
+            exit.data.push(objectOfDates[_start][key2]);
           } else {
             exit.data.push(0)
             entry.data.push(0)
@@ -218,7 +225,7 @@ export default function Summary() {
 
       }
 
-      return { label: xLabels, graph: [entry, exit] };
+      return { label: xLabels, graph: [entry, exit], legends: [key1, key2] };
 
       // setGraph([entry, exit])
       // setLabels(xLabels)
@@ -234,23 +241,24 @@ export default function Summary() {
   }
 
 
-  useEffect(() => {
+  const downloadPDF = async () => {
+    const input = document.getElementById('contentToDownload'); // Replace with your element ID
+    const contentWidth = input.offsetWidth;
+    const contentHeight = input.offsetHeight;
+    html2canvas(input, { scale: contentWidth / input.clientWidth })
+      .then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF();
+        pdf.addImage(imgData, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
+        pdf.save('download.pdf');
+      })
+      .catch((err) => {
+        console.error('Error creating PDF:', err);
+      });
+  };
 
-    if (typeof filter !== undefined && filter) {
-      try {
-        compileGraph(footfall.current, filter, type)
-
-      }
-      catch (err) {
-
-      }
-    }
 
 
-
-
-
-  }, [type, filter])
 
 
   const summaryMenu = [
@@ -266,14 +274,13 @@ export default function Summary() {
         updateFilter={updateFilter}
       />
 
-      <Row>
-        <Col md={2}>
+      <Row   >
+        <Col md={2} >
         </Col>
-        <Col md={8}>
+        <Col md={8}  id="contentToDownload"   >
+          <Download size="16" onClick={downloadPDF} style={{ cursor: "pointer" }} />
+
           <Row className='my-4 ' >
-
-
-
 
 
 
@@ -303,8 +310,37 @@ export default function Summary() {
             </Col>
             <Col md={6} className='p-0 m-0'>
               <div className='feature' >
+                <div className='text-end m-2'>
+                  <Button
+                    color={chartType === "count" ? "#0d6efd" : "#000000"}
+                    className='section-tab'
+                    size='sm'
+                    active={chartType === "count" ? true : false}
+                    key={"compare-tab-line"}
+                    onClick={() => setChartTpe('count')}
+                    style={{ cursor: "pointer" }}
 
-                <PieCore data={[{ name: "Entry", value: total.entry }, { name: "Exit", value: total.exit }]} />
+                  >
+                    Count
+                  </Button>
+                  <Button
+                    color={chartType === "gender" ? "#0d6efd" : "#000000"}
+                    className='section-tab'
+                    size='sm'
+                    active={chartType === "gender" ? true : false}
+                    key={"compare-tab-line"}
+                    onClick={() => setChartTpe('gender')}
+                    style={{ cursor: "pointer" }}
+
+                  >
+                    Gender
+                  </Button>
+
+                </div>
+
+                <PieCore data={chartType === "count" ? [{ name: "Entry", value: total.entry }, { name: "Exit", value: total.exit }]
+                  : [{ name: "Male", value: total.male }, { name: "Female", value: total.female }]
+                } />
 
                 <div style={{ maxHeight: '12.5rem', backgroundColor: '' }}>
                   <div
@@ -332,9 +368,31 @@ export default function Summary() {
               </div>
 
             </Col>
+            <Col className='' md={2}>
+              <div className='feature '>
+                <div className='title'>
+                  Male
+                </div>
+                <div className='number'>
+                  {total.male}
+                </div>
 
-            <Col md={4}>
+              </div>
+              <div className='feature my-4'>
+                <div className='title'>
+                  Female
+                </div>
+                <div className='number'>
+                  {total.female}
+
+                </div>
+
+              </div>
+
+
+
             </Col>
+
 
 
 
@@ -342,29 +400,45 @@ export default function Summary() {
 
           </Row>
           <Row>
-            <Col md={12} className='p-0' style={{ marginLeft: "10px" }}>
+            <Col md={12} className='p-0 mb-3' style={{ marginLeft: "10px" }}>
               <Card className='m-0 p-0'>
                 <CardHeader style={{ backgroundColor: 'none' }} className=''>
                   <Row style={{ position: 'relative' }}>
-                    <Col style={{ backgroundColor: '', position: "absolute", top: "50%", margin: 0, transform: "translateY(-50%)" }}>
+                    <Col md={6} style={{ backgroundColor: '', position: "absolute", top: "50%", margin: 0, transform: "translateY(-50%)" }}>
                       {
 
 
-                        <h4 className="m-0" style={{ fontSize: '14px' }}>{(("Line Graph").toLocaleUpperCase())}</h4>
+                        <h4 className="m-0" style={{ fontSize: '14px' }}>{((`${type} Graph`).toLocaleUpperCase())}</h4>
                       }
                     </Col>
                     <Col className='text-end'>
 
+
                       <Button
-                        // href={"#toggle-tab-" + val[0]}
                         color={type === "line" ? "#0d6efd" : "#000000"}
                         className='section-tab'
                         size='sm'
-                        active={summaryMenu[0][0] === "line" ? true : false}
-                        // active={!Object.keys(type ? type : {}).length ? index === 0 && true : (typeof type !== undefined && type && feature in type && type[feature] === val[0]) ? true : false}
+                        active={type === "line" ? true : false}
                         key={"compare-tab-line"}
+                        onClick={() => setType('line')}
+                        style={{ cursor: "pointer" }}
+
                       >
                         {summaryMenu[0][1]}
+                      </Button>
+
+                      <Button
+                        color={type === "bar" ? "#0d6efd" : "#000000"}
+                        className='section-tab'
+                        size='sm'
+                        active={type === "bar" ? true : false}
+                        key={"compare-tab-line"}
+                        onClick={() => setType('bar')}
+                        style={{ cursor: "pointer" }}
+
+
+                      >
+                        {summaryMenu[1][1]}
                       </Button>
 
 
@@ -372,7 +446,7 @@ export default function Summary() {
                   </Row>
                 </CardHeader>
                 <CardBody className='p-0 m-0 pt-3 '>
-                  <LineCore labels={labels} graph={lineGraph} />
+                  <LineCore labels={labels} graph={countGraph[type]} legends={countGraph.legends} />
 
                 </CardBody>
               </Card>
@@ -385,30 +459,45 @@ export default function Summary() {
               <Card className='m-0 p-0'>
                 <CardHeader style={{ backgroundColor: 'none' }} className=''>
                   <Row style={{ position: 'relative' }}>
-                    <Col style={{ backgroundColor: '', position: "absolute", top: "50%", margin: 0, transform: "translateY(-50%)" }}>
+                    <Col md={6} style={{ backgroundColor: '', position: "absolute", top: "50%", margin: 0, transform: "translateY(-50%)" }}>
                       {
 
 
-                        <h4 className="m-0" style={{ fontSize: '14px' }}>{(("Bar Graph").toLocaleUpperCase())}</h4>
+                        <h4 className="m-0" style={{ fontSize: '14px' }}>{((`${genderType} Graph`).toLocaleUpperCase())}</h4>
                       }
                     </Col>
                     <Col className='text-end'>
                       <Button
-                        // href={"#toggle-tab-" + val[0]}
-                        color={type === "bar" ? "#0d6efd" : "#000000"}
+                        color={genderType === "line" ? "#0d6efd" : "#000000"}
                         className='section-tab'
                         size='sm'
-                        active={summaryMenu[1][0] === "bar" ? true : false}
-                        // active={!Object.keys(type ? type : {}).length ? index === 0 && true : (typeof type !== undefined && type && feature in type && type[feature] === val[0]) ? true : false}
-                        key={"compare-tab-bar"}
+                        active={genderType === "line" ? true : false}
+                        key={"compare-tab-line"}
+                        onClick={() => setGenderType('line')}
+                        style={{ cursor: "pointer" }}
+
+
+                      >
+                        {summaryMenu[0][1]}
+                      </Button>
+
+                      <Button
+                        color={genderType === "bar" ? "#0d6efd" : "#000000"}
+                        className='section-tab'
+                        size='sm'
+                        active={genderType === "bar" ? true : false}
+                        key={"compare-tab-line"}
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setGenderType('bar')}
                       >
                         {summaryMenu[1][1]}
                       </Button>
+
                     </Col>
                   </Row>
                 </CardHeader>
                 <CardBody className='p-0 m-0 pt-3 '>
-                  <LineCore labels={labels} graph={barGraph} />
+                  <LineCore labels={labels} graph={genderGraph[genderType]} legends={genderGraph.legends} />
 
                 </CardBody>
               </Card>

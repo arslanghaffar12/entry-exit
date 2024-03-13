@@ -5,7 +5,7 @@ import 'echarts/lib/chart/bar';
 import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/legend';
 
-const getOption = ({ labels, data }) => {
+const getOption = ({ labels, data, legends }) => {
 
   return {
     tooltip: {
@@ -24,7 +24,7 @@ const getOption = ({ labels, data }) => {
       },
     },
     legend: {
-      data: ['Entry', 'Exit']
+      data: legends
     },
     series: data
 
@@ -40,7 +40,7 @@ const LineCore = (props) => {
   }
 
   useEffect(() => {
-    setOptions(getOption({ labels: props.labels, data: props.graph }));
+    setOptions(getOption({ labels: props.labels, data: props.graph, legends: props.legends }));
   }, [props])
 
   return (

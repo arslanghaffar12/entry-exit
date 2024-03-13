@@ -33,7 +33,7 @@ const getOptions = (title = '', data, legends, time = false, percentage = false)
         },
         legend: {
             show: legends,
-            top: '5%',
+            top: '15%',
             left: 'center'
         },
         color: graphColorsTwo,
@@ -47,7 +47,7 @@ const getOptions = (title = '', data, legends, time = false, percentage = false)
             {
                 name: 'Footfall',
                 type: 'pie',
-                radius: '80%',
+                radius: '65%',
                 data: data,
                 emphasis: {
                     itemStyle: {
@@ -74,7 +74,7 @@ const PieCore = ({ title = '', data, legends, time = false, percentage = false }
             {option != undefined &&
                 <ReactECharts
                     option={option}
-                    style={{ height: 150 }}
+                    style={{ height: 180 }}
                 />
             }
         </Fragment>

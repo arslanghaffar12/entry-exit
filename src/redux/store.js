@@ -3,10 +3,12 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { storage } from '../helpers/common';
 import { auth } from './reducers/auth';
 import { actionTypes } from './constant/action-types';
+import { highlights } from './reducers/highlisghts';
 
 
 const combinedReducer = combineReducers({
   auth: auth ,
+  highlights : highlights
 })
 
 

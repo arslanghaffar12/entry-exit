@@ -3,6 +3,7 @@ import axios from 'axios'
 import { setLogin } from '../redux/actions/auth';
 import { enums, storage } from './common';
 import { jwtDecode } from 'jwt-decode'
+import { setLoading } from '../redux/actions/highlights';
 
 const baseUrl = "http://13.39.60.248:8000/"
 
@@ -14,6 +15,7 @@ export var user = storage.getParsed(enums.USER, defaultUser);
 
 export const loginRequest = async (requestData) => {
     try {
+        requestData.dispatch(setLoading(true))
         const headers = {
             // Add your required headers here, e.g.,
             'Content-Type': 'application/json', // Assuming JSON data
@@ -37,9 +39,12 @@ export const loginRequest = async (requestData) => {
         user = { ...response.data, token: response.data.data, userData }
         // Dispatch successful login action
         requestData.dispatch(setLogin({ ...response.data, token: response.data.data, userData })); // Replace with your actual dispatch function
+        requestData.dispatch(setLoading(false))
 
         return response.data; // Return the response data for potential further use
     } catch (error) {
+        requestData.dispatch(setLoading(false))
+
         const errorMessage = error.response?.data?.message || error.message; // Extract error message
 
         console.log('errorMessage ===', errorMessage);
@@ -53,6 +58,8 @@ export const loginRequest = async (requestData) => {
 
 export const heatmapRequest = async (requestData) => {
     try {
+        requestData.dispatch(setLoading(true))
+
         const headers = {
 
             // Add your required headers here, e.g.,
@@ -62,6 +69,7 @@ export const heatmapRequest = async (requestData) => {
         const response = await axios.post(baseUrl + "heatmap/getHeatmap", requestData.data, {
             // Optional configuration options like headers, timeout, etc.
         });
+        requestData.dispatch(setLoading(false))
 
         // Dispatch successful login action
         // requestData.dispatch(setHeatmap(response.data)); // Replace with your actual dispatch function
@@ -69,6 +77,7 @@ export const heatmapRequest = async (requestData) => {
         return response.data; // Return the response data for potential further use
     } catch (error) {
         const errorMessage = error.response?.data?.message || error.message; // Extract error message
+        requestData.dispatch(setLoading(false))
 
         console.log('errorMessage ===', errorMessage);
         // Dispatch login error action
@@ -81,6 +90,8 @@ export const heatmapRequest = async (requestData) => {
 
 export const footfallRequest = async (requestData) => {
     try {
+        requestData.dispatch(setLoading(true))
+
         const headers = {
             // Add your required headers here, e.g.,
             'Content-Type': 'application/json', // Assuming JSON data
@@ -90,6 +101,7 @@ export const footfallRequest = async (requestData) => {
         const response = await axios.post(baseUrl + "fcache/getSummary", requestData.data, {
             // Optional configuration options like headers, timeout, etc.
         });
+        requestData.dispatch(setLoading(false))
 
         // Dispatch successful login action
         // requestData.dispatch(setHeatmap(response.data)); // Replace with your actual dispatch function
@@ -97,6 +109,7 @@ export const footfallRequest = async (requestData) => {
         return response.data; // Return the response data for potential further use
     } catch (error) {
         const errorMessage = error.response?.data?.message || error.message; // Extract error message
+        requestData.dispatch(setLoading(false))
 
         console.log('errorMessage ===', errorMessage);
         // Dispatch login error action
