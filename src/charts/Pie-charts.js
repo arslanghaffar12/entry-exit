@@ -47,7 +47,7 @@ const getOptions = (title = '', data, legends, time = false, percentage = false)
             {
                 name: 'Footfall',
                 type: 'pie',
-                radius: '65%',
+                radius: '60%',
                 data: data,
                 emphasis: {
                     itemStyle: {

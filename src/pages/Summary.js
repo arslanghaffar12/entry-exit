@@ -243,18 +243,27 @@ export default function Summary() {
 
   const downloadPDF = async () => {
     const input = document.getElementById('contentToDownload'); // Replace with your element ID
-    const contentWidth = input.offsetWidth;
-    const contentHeight = input.offsetHeight;
-    html2canvas(input, { scale: contentWidth / input.clientWidth })
-      .then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF();
-        pdf.addImage(imgData, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight());
-        pdf.save('download.pdf');
-      })
-      .catch((err) => {
-        console.error('Error creating PDF:', err);
-      });
+    html2canvas(input).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210;
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      pdf.save('download.pdf');
+    });
   };
 
 
@@ -274,17 +283,17 @@ export default function Summary() {
         updateFilter={updateFilter}
       />
 
-      <Row   >
+      <Row id="contentToDownload"  >
         <Col md={2} >
         </Col>
-        <Col md={8}  id="contentToDownload"   >
+        <Col md={8} className='m-0 p-0'  >
           <Download size="16" onClick={downloadPDF} style={{ cursor: "pointer" }} />
 
-          <Row className='my-4 ' >
+          <Row className='m-0 my-4 p-0 ' >
 
 
 
-            <Col className='' md={2}>
+            <Col className='p-0 m-0' md={3}>
               <div className='feature '>
                 <div className='title'>
                   Entry
@@ -308,9 +317,10 @@ export default function Summary() {
 
 
             </Col>
-            <Col md={6} className='p-0 m-0'>
-              <div className='feature' >
-                <div className='text-end m-2'>
+            <Col md={6} className=' m-0'>
+
+              <div className='feature'  >
+                <div className='d-flex m-2' style={{ position: "absolute", zIndex: "99999999" }}>
                   <Button
                     color={chartType === "count" ? "#0d6efd" : "#000000"}
                     className='section-tab'
@@ -330,7 +340,7 @@ export default function Summary() {
                     active={chartType === "gender" ? true : false}
                     key={"compare-tab-line"}
                     onClick={() => setChartTpe('gender')}
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: "pointer", marginLeft: "16rem" }}
 
                   >
                     Gender
@@ -342,33 +352,62 @@ export default function Summary() {
                   : [{ name: "Male", value: total.male }, { name: "Female", value: total.female }]
                 } />
 
-                <div style={{ maxHeight: '12.5rem', backgroundColor: '' }}>
-                  <div
-                    className={'scrollbar'} id="style-3" style={{ width: "100%", overflowY: 'auto', overflowX: "hidden" }}
-                  >
+                <Row className='' style={{ marginTop: "-2rem" }}>
+                  <Col md={4}>
                     {total &&
                       Object.keys(total ? total : {})?.map((item, index) => {
-                        return (
-                          <div className={'py-2 px-2'} style={{ paddingLeft: "10px", fontSize: "12px", color: colors.lightDark, }} key={"visitors-chart-" + index}>
-                            <ColorDot
-                              marginRight={'0.4rem'}
-                              color={graphColorsTwo[index]}
-                              display={'inline-block'}
-                            />
-                            {capitalizeFirstLetter(item)} {''}
-                            <span style={{ float: "right" }}>
-                              {total[item]}
-                            </span>
-                          </div>
-                        )
+                        console.log('item of total', item);
+                        if (item === "entry" || item === "exit") {
+                          return (
+                            <div className={'py-2 px-2'} style={{ paddingLeft: "10px", fontSize: "12px", color: colors.lightDark, }} key={"visitors-chart-" + index}>
+                              <ColorDot
+                                marginRight={'0.4rem'}
+                                color={graphColorsTwo[index]}
+                                display={'inline-block'}
+                              />
+                              {capitalizeFirstLetter(item)} {''}
+                              <span style={{ float: "right" }}>
+                                {total[item]}
+                              </span>
+                            </div>
+                          )
+                        }
+
                       })
                     }
-                  </div>
-                </div>
+                  </Col>
+                  <Col md={4}>
+                  </Col>
+                  <Col md={4}>
+                    {total &&
+                      Object.keys(total ? total : {})?.map((item, index) => {
+                        console.log('item of total', item);
+                        if (item === "male" || item === "female") {
+                          return (
+                            <div className={'py-2 px-2'} style={{ paddingLeft: "10px", fontSize: "12px", color: colors.lightDark, }} key={"visitors-chart-" + index}>
+                              <ColorDot
+                                marginRight={'0.4rem'}
+                                color={graphColorsTwo[index]}
+                                display={'inline-block'}
+                              />
+                              {capitalizeFirstLetter(item)} {''}
+                              <span style={{ float: "right" }}>
+                                {total[item]}
+                              </span>
+                            </div>
+                          )
+                        }
+
+                      })
+                    }
+                  </Col>
+                </Row>
+
+
               </div>
 
             </Col>
-            <Col className='' md={2}>
+            <Col className='p-0 m-0' md={3}>
               <div className='feature '>
                 <div className='title'>
                   Male
@@ -399,8 +438,8 @@ export default function Summary() {
 
 
           </Row>
-          <Row>
-            <Col md={12} className='p-0 mb-3' style={{ marginLeft: "10px" }}>
+          <Row className='m-0 p-0'>
+            <Col md={12} className='p-0 mb-3'>
               <Card className='m-0 p-0'>
                 <CardHeader style={{ backgroundColor: 'none' }} className=''>
                   <Row style={{ position: 'relative' }}>
@@ -454,8 +493,8 @@ export default function Summary() {
             </Col>
           </Row>
 
-          <Row>
-            <Col md={12} className='p-0' style={{ marginLeft: "10px" }}>
+          <Row className='m-0 p-0'>
+            <Col md={12} className='p-0 m-0'>
               <Card className='m-0 p-0'>
                 <CardHeader style={{ backgroundColor: 'none' }} className=''>
                   <Row style={{ position: 'relative' }}>
