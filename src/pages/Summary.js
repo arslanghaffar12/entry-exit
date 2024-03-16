@@ -319,8 +319,8 @@ export default function Summary() {
             </Col>
             <Col md={6} className=' m-0'>
 
-              <div className='feature'  >
-                <div className='d-flex m-2' style={{ position: "absolute", zIndex: "99999999" }}>
+              <div className='feature' style={{position : "relative"}}  >
+                <div className='child-container m-2'>
                   <Button
                     color={chartType === "count" ? "#0d6efd" : "#000000"}
                     className='section-tab'
@@ -328,7 +328,6 @@ export default function Summary() {
                     active={chartType === "count" ? true : false}
                     key={"compare-tab-line"}
                     onClick={() => setChartTpe('count')}
-                    style={{ cursor: "pointer" }}
 
                   >
                     Count
@@ -336,11 +335,11 @@ export default function Summary() {
                   <Button
                     color={chartType === "gender" ? "#0d6efd" : "#000000"}
                     className='section-tab'
+                    style={{marginLeft : "auto"}}
                     size='sm'
                     active={chartType === "gender" ? true : false}
                     key={"compare-tab-line"}
                     onClick={() => setChartTpe('gender')}
-                    style={{ cursor: "pointer", marginLeft: "16rem" }}
 
                   >
                     Gender

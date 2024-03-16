@@ -269,7 +269,7 @@ class Heatmap extends Component {
                             style={{
                                 //  width: this.state.imageWidth + "px", height: this.state.imageHeight + "px",
                                 overflow: "auto", margin: "0px", padding: "0px", width: '100%', height: '100%',
-                                zIndex : "9999999999"
+                                zIndex : "20"
                             }}
                         >
                             <svg

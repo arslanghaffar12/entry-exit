@@ -116,3 +116,28 @@ code {
 .filter-div {
   
 }
+
+.child-container {
+  position: absolute;
+  /* top: 0;
+  left: 0; */
+  z-index: 99999;
+  display: flex; /* Enable flexbox for button positioning */
+  width: 90%; /* Make the child element fill the parent's width */
+  /* height: 50px; Set a height for the child element (optional) */
+}
+.left-button {
+  flex: 1 !important;  /* Make the left button occupy half the space */
+  border: 1px solid #ddd !important; /* Add a border (optional) */
+  padding: 5px !important; /* Add padding (optional) */
+  text-align: left !important; /* Align text to the left */
+  cursor: "pointer" !important
+}
+
+.right-button {
+  flex: 1 !important; /* Make the right button occupy half the space */
+  border: 1px solid #ddd !important; /* Add a border (optional) */
+  padding: 5px !important; /* Add padding (optional) */
+  text-align: right !important; /* Align text to the right */
+  cursor: "pointer" !important
+}
