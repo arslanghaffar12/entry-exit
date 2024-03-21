@@ -1,11 +1,15 @@
 import React, { Component, Fragment } from 'react';
 import h337 from 'heatmap.js'
+import { Download } from 'react-feather';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 
 class Heatmap extends Component {
     constructor(props) {
         super(props);
         this.myInput = React.createRef();
+        this.heatmapRef = React.createRef();
         this.state = {
             isImageLoaded: false,
             scale: 1,
@@ -234,10 +238,18 @@ class Heatmap extends Component {
 
 
 
+
+
+
+
+
+
+
+
     render() {
 
         return (
-            <Fragment>
+            <Fragment >
                 {console.log('this.state.popoverOpen', this.state.popoverOpen, "scale is", this.state.scale, "imgwidthis ", this.state.imageWidth)}
 
 
@@ -245,8 +257,7 @@ class Heatmap extends Component {
                 {
 
                     <div
-                        // style={{ width: this.imageElemement.width + "px", height: this.imageElement.height + "px" }}
-                        // style={{ width: (this.state.imageWidth * this.state.scale) + "px", height: (this.state.imageHeight * this.state.scale) + "px" }}
+
                         style={{ width: '100%', height: "100%" }} ref={this.myInput}
 
                     >
@@ -256,26 +267,25 @@ class Heatmap extends Component {
                                 <img
                                     width={this.state.imageWidth * this.state.scale}
                                     height={this.state.imageHeight * this.state.scale}
-                                    src={this.props.dye}
-                                    style={{ position: "absolute", zIndex: 2 }} alt='' />
+                                    src={this.props.baeUrl}
+                                    style={{ position: "absolute", zIndex: 0 }} alt='' />
 
                             </>
                         }
 
                         <div
                             id="live-heatmap"
-                            // ref={this.reference}
-                            // id={this.props.key}
+
                             style={{
-                                //  width: this.state.imageWidth + "px", height: this.state.imageHeight + "px",
                                 overflow: "auto", margin: "0px", padding: "0px", width: '100%', height: '100%',
-                                zIndex : "20"
+                                zIndex: 0
                             }}
                         >
                             <svg
                                 height={this.state.imageHeight * this.state.scale}
                                 width={this.state.imageWidth * this.state.scale}
-                                style={{ position: "absolute", zIndex: 10 }}
+                                style={{ position: "absolute", zIndex: 0 }}
+                                ref={this.heatmapRef}
                             >
                                 {this.props.sections.map((section, ind) => {
                                     var points = "";
@@ -368,7 +378,7 @@ class Heatmap extends Component {
                                 })}
                             </svg>
 
-                            <img width={this.state.imageWidth * this.state.scale} height={this.state.imageHeight * this.state.scale} src={this.props.map} alt='' />
+                            <img width={this.state.imageWidth * this.state.scale} height={this.state.imageHeight * this.state.scale} src={this.props.baeUrl} alt='' />
 
                         </div>
 

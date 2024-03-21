@@ -281,6 +281,8 @@ export default function Summary() {
         type="calendar"
         pageTitle=""
         updateFilter={updateFilter}
+        page='summary'
+
       />
 
       <Row id="contentToDownload"  >
@@ -319,7 +321,7 @@ export default function Summary() {
             </Col>
             <Col md={6} className=' m-0'>
 
-              <div className='feature' style={{position : "relative"}}  >
+              <div className='feature' style={{ position: "relative" }}  >
                 <div className='child-container m-2'>
                   <Button
                     color={chartType === "count" ? "#0d6efd" : "#000000"}
@@ -335,7 +337,7 @@ export default function Summary() {
                   <Button
                     color={chartType === "gender" ? "#0d6efd" : "#000000"}
                     className='section-tab'
-                    style={{marginLeft : "auto"}}
+                    style={{ marginLeft: "auto" }}
                     size='sm'
                     active={chartType === "gender" ? true : false}
                     key={"compare-tab-line"}

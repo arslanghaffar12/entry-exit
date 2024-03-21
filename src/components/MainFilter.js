@@ -82,7 +82,7 @@ const MainFilter = (props) => {
     const [fids, setFids] = useLocalStorage("fids", {});
     const [cids, setCids] = useLocalStorage("cids", {});
 
-    console.log('sids',sids, cids, fids);
+    console.log('sids', sids, cids, fids);
 
 
 
@@ -136,7 +136,7 @@ const MainFilter = (props) => {
 
 
 
-        var filter = { start: _startDate, end: _endDate, EMP: '0', sid, fid, cid}
+        var filter = { start: _startDate, end: _endDate, EMP: '0', sid, fid, cid }
         props.updateFilter(filter);
         setShowFilters(false)
 
@@ -306,16 +306,29 @@ const MainFilter = (props) => {
     }
 
     const handleCids = (e) => {
-        let _cids = { ...cids }
 
-        if (e in _cids) {
-            delete _cids[e]
-        }
-        else {
-            _cids[e] = e
+        if (props.page === "summary") {
+            let _cids = { ...cids }
+
+            if (e in _cids) {
+                delete _cids[e]
+            }
+            else {
+                _cids[e] = e
+            }
+            setCids(_cids)
+
         }
 
-        setCids(_cids)
+        if (props.page === "heatmap") {
+
+            let _cid = {}
+            _cid[e] = e;
+
+            setCids(_cid)
+        }
+
+
     }
 
 
